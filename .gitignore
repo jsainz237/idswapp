@@ -38,3 +38,22 @@ next-env.d.ts
 # Remix IDE files
 contracts/.*
 contracts/artifacts/
+
+node_modules
+.env
+
+# Hardhat files
+/cache
+/artifacts2
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+ignition/deployments/chain-31337
+artifacts/

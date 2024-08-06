@@ -1,48 +1,48 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "./idswapp-root.sol";
+import "./idswapp-factory.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IAccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 
 contract IDSwappAccount is Ownable {
-    IDSwappRoot public idSwappRoot;
+    IDSwappFactory public idSwappFactory;
 
-    uint32 private subdomain;
-    string private forwardEmail;
+    uint32 private _subdomain;
+    string private _forwardEmail;
     
     string public description;
     uint32 public price;
     bool public purchasable;
 
-    constructor(address owner, uint32 _subdomain, IDSwappRoot rootContract) Ownable(owner) {
-        subdomain = _subdomain;
-        idSwappRoot = rootContract;
+    constructor(address owner, uint32 subdomain, IDSwappFactory factoryContract) Ownable(owner) {
+        _subdomain = subdomain;
+        idSwappFactory = factoryContract;
     }
 
     function _resetContract() private {
         delete price;
-        delete forwardEmail;
+        delete _forwardEmail;
         purchasable = false;
     }
 
     function _transferOwnership(address newOwner) internal override {
         super._transferOwnership(newOwner);
 
-        if (subdomain != 0 && owner() != address(0)) {
-            idSwappRoot.setSubdomainOwner(subdomain, owner());
+        if (_subdomain != 0 && owner() != address(0)) {
+            idSwappFactory.setSubdomainOwner(_subdomain, owner());
         }
     }
 
     function renounceOwnership() public override onlyOwner {
         _resetContract();
         purchasable = true;
-        _transferOwnership(address(idSwappRoot));
+        _transferOwnership(address(idSwappFactory));
     }
 
     function setForwardEmail(string calldata email) public onlyOwner {
-        forwardEmail = email;
+        _forwardEmail = email;
     }
 
     function setPurchasable(bool purchasable_) public onlyOwner {
@@ -58,12 +58,12 @@ contract IDSwappAccount is Ownable {
     }
 
     function details() public view returns (uint32, string memory) {
-        if (idSwappRoot.isAdmin(msg.sender)) {
-            return (subdomain, forwardEmail);
+        if (idSwappFactory.isAdmin(msg.sender)) {
+            return (_subdomain, _forwardEmail);
         }
 
         require(owner() == msg.sender, "Account details are restricted to Owner and Admins");
-        return (subdomain, forwardEmail);
+        return (_subdomain, _forwardEmail);
     }
 
     function purchaseAccount(string calldata email) public payable {
