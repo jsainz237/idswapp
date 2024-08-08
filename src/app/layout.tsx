@@ -1,6 +1,8 @@
 import { Inter as FontSans } from "next/font/google";
 import type { Metadata } from "next";
 
+import { WalletProvider } from "@/components/context/wallet-context";
+import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +37,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <WalletProvider>
+            <Header />
+            {children}
+          </WalletProvider>
         </ThemeProvider>
       </body>
     </html>
