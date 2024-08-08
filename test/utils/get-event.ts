@@ -1,4 +1,4 @@
-import { ContractTransactionResponse } from 'ethers';
+import { ContractTransactionResponse } from "ethers";
 
 export async function getEvent(tx: ContractTransactionResponse, name: string) {
   const receipt = await tx.wait();

@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import hre from "hardhat";
+
 import { validAddress } from "../utils/address";
 import { getEvent } from "../utils/get-event";
 
@@ -26,7 +27,7 @@ describe("IDSwappFactory", () => {
   describe("Admins privelages", () => {
     it("should allow an ADMIN to add another ADMIN", async () => {
       const factory = await deployFactory();
-      const [deployer, admin] = await hre.ethers.getSigners();
+      const [_deployer, admin] = await hre.ethers.getSigners();
 
       await factory.grantAdmin(admin.address);
       expect(await factory.isAdmin(admin.address)).to.be.true;
@@ -34,7 +35,7 @@ describe("IDSwappFactory", () => {
 
     it("should allow an ADMIN to remove another ADMIN", async () => {
       const factory = await deployFactory();
-      const [deployer, admin] = await hre.ethers.getSigners();
+      const [_deployer, admin] = await hre.ethers.getSigners();
 
       await factory.grantAdmin(admin.address);
       await factory.revokeAdmin(admin.address);
@@ -43,17 +44,21 @@ describe("IDSwappFactory", () => {
 
     it("should not allow a non-ADMIN to add an ADMIN", async () => {
       const factory = await deployFactory();
-      const [deployer, nonAdmin] = await hre.ethers.getSigners();
+      const [_deployer, nonAdmin] = await hre.ethers.getSigners();
 
-      const attemptGrant = factory.connect(nonAdmin).grantAdmin(nonAdmin.address);
+      const attemptGrant = factory
+        .connect(nonAdmin)
+        .grantAdmin(nonAdmin.address);
       await expect(attemptGrant).to.be.reverted;
     });
 
     it("should not allow a non-ADMIN to remove an ADMIN", async () => {
       const factory = await deployFactory();
-      const [deployer, nonAdmin] = await hre.ethers.getSigners();
+      const [_deployer, nonAdmin] = await hre.ethers.getSigners();
 
-      const attemptRevoke = factory.connect(nonAdmin).revokeAdmin(nonAdmin.address);
+      const attemptRevoke = factory
+        .connect(nonAdmin)
+        .revokeAdmin(nonAdmin.address);
       await expect(attemptRevoke).to.be.reverted;
     });
   });
@@ -61,11 +66,12 @@ describe("IDSwappFactory", () => {
   describe("Account creation", () => {
     it("Should emit an event when a new account is created", async () => {
       const factory = await deployFactory();
-      const [deployer, user] = await hre.ethers.getSigners();
+      const [_deployer, user] = await hre.ethers.getSigners();
 
       const createAccount = factory.connect(user).createAccount();
 
-      await expect(createAccount).to.emit(factory, "IDSwappAccountCreated")
+      await expect(createAccount)
+        .to.emit(factory, "IDSwappAccountCreated")
         .withArgs(
           (contractAddr: string) => validAddress(contractAddr),
           user.address,
@@ -74,7 +80,7 @@ describe("IDSwappFactory", () => {
 
     it("Should whitelist the account's contract address", async () => {
       const factory = await deployFactory();
-      const [deployer, user] = await hre.ethers.getSigners();
+      const [_deployer, user] = await hre.ethers.getSigners();
 
       const tx = await factory.connect(user).createAccount();
       const event = await getEvent(tx, "IDSwappAccountCreated");
@@ -87,11 +93,12 @@ describe("IDSwappFactory", () => {
   describe("Account Map", () => {
     it("Should not allow non-whitelisted address to edit subdomain map", async () => {
       const factory = await deployFactory();
-      const [deployer, user] = await hre.ethers.getSigners();
-  
+      const [_deployer, user] = await hre.ethers.getSigners();
+
       const tx = await factory.connect(user).createAccount();
       const event = await getEvent(tx, "IDSwappAccountCreated");
-      
+      expect(event).to.exist;
+
       const attemptEdit = factory.connect(user).setSubdomainOwner(1000, user);
       await expect(attemptEdit).to.be.reverted;
     });
