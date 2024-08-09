@@ -1,4 +1,4 @@
-import { Inter as FontSans } from "next/font/google";
+import { Inter as FontSans, Courier_Prime } from "next/font/google";
 import type { Metadata } from "next";
 
 import { WalletProvider } from "@/components/context/wallet-context";
@@ -11,6 +11,12 @@ import "./globals.css";
 const inter = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const courierPrime = Courier_Prime({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -29,6 +35,7 @@ export default function RootLayout({
         className={cn(
           "flex min-h-screen flex-col bg-background font-sans antialiased",
           inter.variable,
+          courierPrime.variable
         )}
       >
         <ThemeProvider

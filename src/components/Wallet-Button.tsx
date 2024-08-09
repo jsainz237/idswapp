@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import MetaMaskOnboarding from "@metamask/onboarding";
+import { Wallet } from "lucide-react";
 
 import { actions, useWallet } from "./context/wallet-context";
 import { Button } from "./ui/button";
@@ -69,6 +70,7 @@ export function WalletButton() {
 
   return (
     <Button onClick={onClick} disabled={isDisabled}>
+      {wallet.address ? <Wallet size={16} className="mr-2" /> : null}
       {buttonText}
     </Button>
   );
