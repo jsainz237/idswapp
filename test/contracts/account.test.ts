@@ -1,16 +1,22 @@
 import { expect } from "chai";
 import hre from "hardhat";
+import { getEvent } from "../utils/get-event";
+import { IDSwappAccount } from "../../typechain-types";
 
 describe("IDSwappAccount", () => {
   const deployAccount = async () => {
     const [_, user] = await hre.ethers.getSigners();
 
-    const factory: any = await hre.ethers.deployContract("IDSwappFactory");
-    const account = await hre.ethers.deployContract("IDSwappAccount", [
-      user.address,
-      1001,
-      factory.runner?.address,
-    ]);
+    const IDSwappAccount = await hre.ethers.getContractFactory("IDSwappAccount");
+
+    const factory = await hre.ethers.deployContract("IDSwappFactory");
+    const tx = await factory.connect(user).createAccount();
+    const event = await getEvent(tx, "IDSwappAccountCreated");
+    
+    expect(event).to.exist;
+
+    const acctAddr = event.args[0];
+    const account = IDSwappAccount.attach(acctAddr) as any as IDSwappAccount;
 
     return { owner: user, account, factory };
   };
@@ -28,22 +34,22 @@ describe("IDSwappAccount", () => {
     it("Should allow the owner to change the account details", async () => {
       const { owner, account } = await deployAccount();
 
-      await expect(account.connect(owner).setPrice(1000)).to.not.be.reverted;
-      await expect(account.connect(owner).setDescription("Hello")).to.not.be
-        .reverted;
-      await expect(account.connect(owner).setPurchasable(true)).to.not.be
-        .reverted;
+      console.log(await account.idSwappFactory());
+
+      const setDetails = account.connect(owner)
+        .setDetails('email@email.com', 'This is a test Description', 1000, true);
+
+      await expect(setDetails).to.not.be.reverted;
     });
 
     it("Should not allow a non-owner to change the account details", async () => {
       const { account } = await deployAccount();
       const [_deployer, _owner, randomUser] = await hre.ethers.getSigners();
 
-      await expect(account.connect(randomUser).setPrice(1000)).to.be.reverted;
-      await expect(account.connect(randomUser).setDescription("Hello")).to.be
-        .reverted;
-      await expect(account.connect(randomUser).setPurchasable(true)).to.be
-        .reverted;
+      const setDetails = account.connect(randomUser)
+        .setDetails('email@email.com', 'This is a test Description', 1000, true);
+
+      await expect(setDetails).to.be.reverted;
     });
   });
 });

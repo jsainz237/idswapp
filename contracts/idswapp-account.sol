@@ -27,11 +27,15 @@ contract IDSwappAccount is Ownable {
         purchasable = false;
     }
 
+    function _updateFactory() private {
+        idSwappFactory.setSubdomainProperties(_subdomain, owner(), this);
+    }
+
     function _transferOwnership(address newOwner) internal override {
         super._transferOwnership(newOwner);
 
         if (_subdomain != 0 && owner() != address(0)) {
-            idSwappFactory.setSubdomainOwner(_subdomain, owner());
+            _updateFactory();
         }
     }
 
@@ -41,23 +45,21 @@ contract IDSwappAccount is Ownable {
         _transferOwnership(address(idSwappFactory));
     }
 
-    function setForwardEmail(string calldata email) public onlyOwner {
+    function setDetails(
+        string calldata email,
+        string calldata description_,
+        uint32 price_,
+        bool purchasable_
+    ) public onlyOwner {
         _forwardEmail = email;
-    }
-
-    function setPurchasable(bool purchasable_) public onlyOwner {
-        purchasable = purchasable_;
-    }
-
-    function setPrice(uint32 price_) public onlyOwner {
-        price = price_;
-    }
-
-    function setDescription(string calldata description_) public onlyOwner {
         description = description_;
+        price = price_;
+        purchasable = purchasable_;
+
+        _updateFactory();
     }
 
-    function details() public view returns (uint32, string memory) {
+    function privateDetails() public view returns (uint32, string memory) {
         if (idSwappFactory.isAdmin(msg.sender)) {
             return (_subdomain, _forwardEmail);
         }
@@ -75,6 +77,7 @@ contract IDSwappAccount is Ownable {
         _transferOwnership(msg.sender);
 
         _resetContract();
-        setForwardEmail(email);
+        _forwardEmail = email;
+        _updateFactory();
     }
 }

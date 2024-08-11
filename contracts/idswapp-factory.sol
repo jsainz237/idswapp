@@ -3,18 +3,24 @@ pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import "./idswapp-account.sol";
 
 contract IDSwappFactory is Ownable, AccessControl {
-    struct AccountInfo {
+    struct PublicAccountInfo {
         address _owner;
         address _contract;
+
+        string description;
+        uint32 price;
+        bool purchasable;
     }
 
     bytes32 public constant ADMIN = keccak256("ADMIN");
+    uint32 public constant SUBDOMAIN_START = 1000;
 
-    uint32 public subdomainCounter = 1000;
-    mapping(uint32 => AccountInfo) private accountMap;
+    uint32 public subdomainCounter = SUBDOMAIN_START;
+    mapping(uint32 => PublicAccountInfo) private accountMap;
     mapping(address => bool) public whitelistedContracts;
 
     event IDSwappAccountCreated(
@@ -28,6 +34,16 @@ contract IDSwappFactory is Ownable, AccessControl {
 
     function _whitelistContract(address acctContract) private {
         whitelistedContracts[acctContract] = true;
+    }
+
+    function _setSubdomainProperties(uint32 subdomain, address owner, IDSwappAccount account) private {
+        accountMap[subdomain] = PublicAccountInfo({
+            _owner: owner,
+            _contract: msg.sender,
+            description: account.description(),
+            price: account.price(),
+            purchasable: account.purchasable()
+        });
     }
 
     function isAdmin(address account) public view returns (bool) {
@@ -44,17 +60,27 @@ contract IDSwappFactory is Ownable, AccessControl {
     }
 
     /** Only allows whitelisted account contracts to edit the account map */
-    function setSubdomainOwner(uint32 subdomain, address owner) public {
+    function setSubdomainProperties(uint32 subdomain, address owner, IDSwappAccount account) public {
         require(whitelistedContracts[msg.sender], "Permission denied");
-        accountMap[subdomain] = AccountInfo(owner, msg.sender);
+        _setSubdomainProperties(subdomain, owner, account);
     }
 
-    function getIdOwner(uint32 subdomain) public view returns (address) {
-        return accountMap[subdomain]._owner;
+    function getSubdomainDetails(uint32 subdomain) public view returns (PublicAccountInfo memory) {
+        return accountMap[subdomain];
     }
 
-    function getIdContract(uint32 subdomain) public view returns (address) {
-        return accountMap[subdomain]._contract;
+    function getAll(uint32 limit, uint32 offset) public view returns (PublicAccountInfo[] memory) {
+        uint32 count = subdomainCounter - 1000;
+
+        if (offset >= count) {
+            return new PublicAccountInfo[](0);
+        }
+
+        PublicAccountInfo[] memory accts = new PublicAccountInfo[](Math.min(limit, count - offset));
+        for (uint32 i = offset; i < count && i < offset + limit; i++) {
+            accts[i - offset] = accountMap[i + 1000];
+        }
+        return accts;
     }
 
     /** Creates an account contract, then whiteslists that contract to the root's whitelisted addresses */
@@ -62,7 +88,9 @@ contract IDSwappFactory is Ownable, AccessControl {
         address owner = msg.sender;
     
         IDSwappAccount account = new IDSwappAccount(owner, subdomainCounter, this);
+        _setSubdomainProperties(subdomainCounter, owner, account);
         _whitelistContract(address(account));
+
         emit IDSwappAccountCreated(address(account), owner);
 
         subdomainCounter++;

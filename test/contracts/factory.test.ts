@@ -99,8 +99,38 @@ describe("IDSwappFactory", () => {
       const event = await getEvent(tx, "IDSwappAccountCreated");
       expect(event).to.exist;
 
-      const attemptEdit = factory.connect(user).setSubdomainOwner(1000, user);
+      // Technically `factory` should be replaced with the `IDSwappAccount` contract
+      // But for the sake of this test, we'll use the factory contract since it's easier
+      // and expected to fail for different reasons
+      const attemptEdit = factory.connect(user).setSubdomainProperties(1000, user, factory);
       await expect(attemptEdit).to.be.reverted;
+    });
+
+    describe("Get All Accounts", () => {
+      it("Should return the expected count of subdomains", async () => {
+        let allAccounts;
+        const factory = await deployFactory();
+        const [_deployer, user] = await hre.ethers.getSigners();
+
+        // Create 5 accounts
+        for (let i = 0; i < 5; i++) {
+          await factory.connect(user).createAccount();
+        }
+
+        const tests = [
+          { limit: 10,  offset: 0,  expected: 5 },
+          { limit: 1,   offset: 0,  expected: 1 },
+          { limit: 10,  offset: 10, expected: 0 },
+          { limit: 0,   offset: 10, expected: 0 },
+          { limit: 5,   offset: 2,  expected: 3 },
+          { limit: 3,   offset: 10, expected: 0 },
+        ];
+
+        for (const test of tests) {
+          allAccounts = await factory.getAll(test.limit, test.offset);
+          expect(allAccounts.length).to.equal(test.expected);
+        }
+      });
     });
   });
 });
