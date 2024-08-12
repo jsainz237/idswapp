@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { DecodeText } from "@/components/Decode-Text";
+import { HightlightText } from "@/components/Highlight-Text";
 import { ScrollArrow } from "@/components/Scroll-Arrow";
 
 export default function Home() {
@@ -20,7 +21,11 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="min-h-screen bg-gray-900" />
+      <div className="flex min-h-screen flex-col items-center bg-gray-900 py-8">
+        <HightlightText className="sticky top-[120px]" animationTiming={1000}>
+          Accounts with IDSwapp
+        </HightlightText>
+      </div>
     </main>
   );
 }
