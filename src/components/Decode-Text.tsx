@@ -1,18 +1,24 @@
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
 import _ from "lodash";
 
-import { DecodeCharacter } from './Decode-Character';
 import { cn } from "@/lib/utils";
+
+import { DecodeCharacter } from "./Decode-Character";
 
 interface Props {
   children: string;
   size?: number;
   className?: string;
+  animationTime?: number;
 }
 
-export function DecodeText({ children, className, size = 14 }: Props) {
+export function DecodeText({
+  children,
+  className,
+  size = 14,
+  animationTime = 2000,
+}: Props) {
   if (typeof children !== "string") {
     throw new Error("<DecodeText> only accepts string children");
   }
@@ -27,15 +33,20 @@ export function DecodeText({ children, className, size = 14 }: Props) {
 
   const characters = characterMap.map(({ char, idx }) => {
     if (char === " ") {
-      return <span key={idx}>{char}</span>
+      return <span key={idx}>{char}</span>;
     }
 
-    const randomDelay = _.random(30, 60);
-    const delay = (revealOrder.indexOf(idx) || 0) * randomDelay;
+    const characterDelay = animationTime / characterMap.length;
+    const delay = (revealOrder.indexOf(idx) || 0) * characterDelay;
     return <DecodeCharacter key={idx} char={char} delay={delay} />;
   });
 
-  return <div className={cn("flex whitespace-pre font-mono", className)} style={{ fontSize: size }}>{characters}</div>;
+  return (
+    <div
+      className={cn("flex whitespace-pre font-mono", className)}
+      style={{ fontSize: size }}
+    >
+      {characters}
+    </div>
+  );
 }
-
-

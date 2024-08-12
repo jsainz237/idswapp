@@ -1,4 +1,7 @@
-import { Inter as FontSans, Courier_Prime } from "next/font/google";
+import {
+  Inter as FontSans,
+  Share_Tech_Mono as FontMono,
+} from "next/font/google";
 import type { Metadata } from "next";
 
 import { WalletProvider } from "@/components/context/wallet-context";
@@ -13,8 +16,8 @@ const inter = FontSans({
   variable: "--font-sans",
 });
 
-const courierPrime = Courier_Prime({
-  weight: ["400", "700"],
+const courierPrime = FontMono({
+  weight: ["400"],
   subsets: ["latin"],
   variable: "--font-mono",
 });
@@ -33,9 +36,9 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "flex min-h-screen flex-col bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           inter.variable,
-          courierPrime.variable
+          courierPrime.variable,
         )}
       >
         <ThemeProvider
