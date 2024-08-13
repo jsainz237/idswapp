@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import MetaMaskOnboarding from "@metamask/onboarding";
 import { Wallet } from "lucide-react";
 
-import { actions, useWallet } from "./context/wallet-context";
+import { useWallet, actions } from "./context/wallet-context";
 import { Button } from "./ui/button";
 
 const ONBOARD_TEXT = "Install MetaMask!";
@@ -18,27 +18,25 @@ export function WalletButton() {
   const onboarding = useRef<MetaMaskOnboarding>();
 
   useEffect(() => {
-    if (wallet.address) {
-      setButtonText(`0x...${wallet.address.slice(-5)}`);
-    }
-  }, [wallet.address]);
-
-  useEffect(() => {
     if (!onboarding.current) {
       onboarding.current = new MetaMaskOnboarding();
     }
   }, []);
 
   useEffect(() => {
-    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      if (accounts.length > 0) {
-        dispatch(actions.setAddress(accounts[0]));
-        onboarding.current?.stopOnboarding();
-      } else {
-        setButtonText(CONNECT_TEXT);
-        setDisabled(false);
+    (async () => {
+      if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+        if (accounts.length > 0) {
+          const [account] = accounts;
+          setButtonText(`0x...${account.slice(-5)}`);
+          onboarding.current?.stopOnboarding();
+          dispatch?.(await actions.refreshWallet());
+        } else {
+          setButtonText(CONNECT_TEXT);
+          setDisabled(false);
+        }
       }
-    }
+    })();
   }, [dispatch, accounts]);
 
   useEffect(() => {
@@ -70,7 +68,7 @@ export function WalletButton() {
 
   return (
     <Button onClick={onClick} disabled={isDisabled}>
-      {wallet.address ? <Wallet size={16} className="mr-2" /> : null}
+      {wallet.signer ? <Wallet size={16} className="mr-2" /> : null}
       {buttonText}
     </Button>
   );

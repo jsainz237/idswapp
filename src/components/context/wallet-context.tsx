@@ -1,42 +1,53 @@
 "use client";
 
-import { createContext, useContext, useReducer } from "react";
+import {
+  createContext,
+  Dispatch,
+  useContext,
+  useReducer,
+} from "react";
+import { ethers, JsonRpcProvider } from "ethers";
 
-interface IWalletContext {
-  address?: string;
+interface IWalletState {
+  signer?: ethers.Signer;
+  provider?: ethers.BrowserProvider | JsonRpcProvider;
 }
 
-const WalletContext = createContext<IWalletContext>({
-  address: undefined,
-});
+const initialWalletState: IWalletState = {
+  signer: undefined,
+  provider: undefined,
+};
 
-const WalletDispatchContext = createContext<any>(null);
+const WalletContext = createContext<IWalletState>(initialWalletState);
+const WalletDispatchContext = createContext<Dispatch<any> | null>(null);
 
-const walletReducer = (state: IWalletContext, action: any) => {
+const walletReducer = (state: IWalletState, action: any): IWalletState => {
   switch (action.type) {
-    case "SET_ADDRESS":
-      return { ...state, address: action.payload };
+    case "SET_WALLET":
+      return { ...state, ...action.payload };
     default:
       return state;
   }
 };
 
 export const actions = {
-  setAddress: function (address: string) {
-    return { type: "SET_ADDRESS", payload: address };
+  refreshWallet: async function () {
+    if (!window.ethereum) return;
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    return { type: "SET_WALLET", payload: { provider, signer } };
   },
 };
 
-export function useWallet() {
+export function useWallet(): [IWalletState, Dispatch<any> | null] {
   const wallet = useContext(WalletContext);
   const dispatch = useContext(WalletDispatchContext);
   return [wallet, dispatch];
 }
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(walletReducer, {
-    address: undefined,
-  });
+  const [state, dispatch] = useReducer(walletReducer, initialWalletState);
 
   return (
     <WalletContext.Provider value={state}>
