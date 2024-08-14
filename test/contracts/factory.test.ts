@@ -102,7 +102,9 @@ describe("IDSwappFactory", () => {
       // Technically `factory` should be replaced with the `IDSwappAccount` contract
       // But for the sake of this test, we'll use the factory contract since it's easier
       // and expected to fail for different reasons
-      const attemptEdit = factory.connect(user).setSubdomainProperties(1000, user, factory);
+      const attemptEdit = factory
+        .connect(user)
+        .setSubdomainProperties(1000, user, factory);
       await expect(attemptEdit).to.be.reverted;
     });
 
@@ -118,12 +120,12 @@ describe("IDSwappFactory", () => {
         }
 
         const tests = [
-          { limit: 10,  offset: 0,  expected: 5 },
-          { limit: 1,   offset: 0,  expected: 1 },
-          { limit: 10,  offset: 10, expected: 0 },
-          { limit: 0,   offset: 10, expected: 0 },
-          { limit: 5,   offset: 2,  expected: 3 },
-          { limit: 3,   offset: 10, expected: 0 },
+          { limit: 10, offset: 0, expected: 5 },
+          { limit: 1, offset: 0, expected: 1 },
+          { limit: 10, offset: 10, expected: 0 },
+          { limit: 0, offset: 10, expected: 0 },
+          { limit: 5, offset: 2, expected: 3 },
+          { limit: 3, offset: 10, expected: 0 },
         ];
 
         for (const test of tests) {

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import _ from "lodash";
 
 import { cn } from "@/lib/utils";
@@ -13,7 +14,7 @@ interface Props {
   animationTime?: number;
 }
 
-export function DecodeText({
+export const DecodeText = memo(function DecodeText({
   children,
   className,
   size = 14,
@@ -49,4 +50,4 @@ export function DecodeText({
       {characters}
     </div>
   );
-}
+});

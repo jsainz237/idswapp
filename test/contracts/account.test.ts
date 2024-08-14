@@ -1,18 +1,20 @@
 import { expect } from "chai";
 import hre from "hardhat";
-import { getEvent } from "../utils/get-event";
+
 import { IDSwappAccount } from "../../typechain-types";
+import { getEvent } from "../utils/get-event";
 
 describe("IDSwappAccount", () => {
   const deployAccount = async () => {
     const [_, user] = await hre.ethers.getSigners();
 
-    const IDSwappAccount = await hre.ethers.getContractFactory("IDSwappAccount");
+    const IDSwappAccount =
+      await hre.ethers.getContractFactory("IDSwappAccount");
 
     const factory = await hre.ethers.deployContract("IDSwappFactory");
     const tx = await factory.connect(user).createAccount();
     const event = await getEvent(tx, "IDSwappAccountCreated");
-    
+
     expect(event).to.exist;
 
     const acctAddr = event.args[0];
@@ -36,8 +38,14 @@ describe("IDSwappAccount", () => {
 
       console.log(await account.idSwappFactory());
 
-      const setDetails = account.connect(owner)
-        .setDetails('email@email.com', 'This is a test Description', 1000, true);
+      const setDetails = account
+        .connect(owner)
+        .setDetails(
+          "email@email.com",
+          "This is a test Description",
+          1000,
+          true,
+        );
 
       await expect(setDetails).to.not.be.reverted;
     });
@@ -46,8 +54,14 @@ describe("IDSwappAccount", () => {
       const { account } = await deployAccount();
       const [_deployer, _owner, randomUser] = await hre.ethers.getSigners();
 
-      const setDetails = account.connect(randomUser)
-        .setDetails('email@email.com', 'This is a test Description', 1000, true);
+      const setDetails = account
+        .connect(randomUser)
+        .setDetails(
+          "email@email.com",
+          "This is a test Description",
+          1000,
+          true,
+        );
 
       await expect(setDetails).to.be.reverted;
     });

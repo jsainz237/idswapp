@@ -4,6 +4,7 @@ import {
   createContext,
   Dispatch,
   useContext,
+  useEffect,
   useReducer,
 } from "react";
 import { ethers, JsonRpcProvider } from "ethers";
@@ -48,6 +49,10 @@ export function useWallet(): [IWalletState, Dispatch<any> | null] {
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(walletReducer, initialWalletState);
+
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   return (
     <WalletContext.Provider value={state}>

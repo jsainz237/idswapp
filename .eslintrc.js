@@ -32,5 +32,6 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_' }],
     'simple-import-sort/imports': ['error', importSortGroupings],
     'simple-import-sort/exports': 'error',
+    'react/prop-types': 'off',
   }
 }

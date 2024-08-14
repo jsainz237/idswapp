@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import MetaMaskOnboarding from "@metamask/onboarding";
 import { Wallet } from "lucide-react";
 
-import { useWallet, actions } from "./context/wallet-context";
+import { actions, useWallet } from "./context/wallet-context";
 import { Button } from "./ui/button";
 
 const ONBOARD_TEXT = "Install MetaMask!";
