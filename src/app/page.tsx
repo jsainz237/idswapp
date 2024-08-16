@@ -1,28 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import _ from "lodash";
 import Image from "next/image";
 
-import { useWallet } from "@/components/context/wallet-context";
 import { DecodeText } from "@/components/Decode-Text";
 import { HightlightText } from "@/components/Highlight-Text";
+import { ScrollArrow } from "@/components/Scroll-Arrow";
 
 export default function Home() {
-  const [wallet] = useWallet();
-  const [showWarning, setShowWarning] = useState(false);
-
-  useEffect(() => {
-    // Need a debounce to prevent the warning from showing on page load
-    if (!wallet.provider || !wallet.signer) {
-      _.debounce(() => setShowWarning(true), 2000)();
-    }
-
-    if (wallet.provider && wallet.signer) {
-      setShowWarning(false);
-    }
-  }, [wallet]);
-
   return (
     <main>
       <div className="flex min-h-screen flex-col items-center justify-between">
@@ -32,11 +17,16 @@ export default function Home() {
             DECENTRALIZED EMAIL ACCOUNTS
           </DecodeText>
         </div>
-        {showWarning && (
-          <div className="type-h2 mb-10 font-mono text-lg lowercase">
-            Connect wallet to get started
-          </div>
-        )}
+
+        <div className="mb-10">
+          <ScrollArrow />
+        </div>
+      </div>
+
+      <div className="flex min-h-screen flex-col items-center bg-gray-900 py-8">
+        <HightlightText animationTiming={1000} className="type-h2 mt-10">
+          Accounts with IDSwapp
+        </HightlightText>
       </div>
     </main>
   );

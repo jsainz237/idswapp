@@ -10,7 +10,7 @@ export const ScrollArrow = () => {
   const translateXNeg = useTransform(scrollYProgress, [0, 1], [-4, -1]);
 
   return (
-    <>
+    <div className="flex">
       <motion.div
         className="h-1 w-7 rounded-full bg-foreground"
         style={{ rotate: rotationPos, translateX: translateXPos }}
@@ -19,6 +19,6 @@ export const ScrollArrow = () => {
         className="h-1 w-7 rounded-full bg-foreground"
         style={{ rotate: rotationNeg, translateX: translateXNeg }}
       />
-    </>
+    </div>
   );
 };

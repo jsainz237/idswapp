@@ -2,13 +2,17 @@ import {
   Inter as FontSans,
   Share_Tech_Mono as FontMono,
 } from "next/font/google";
+import { headers } from "next/headers";
+import { ThemeProviderProps } from "next-themes/dist/types";
 import type { Metadata } from "next";
 
-import { WalletProvider } from "@/components/context/wallet-context";
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { WagmiProviders } from "@/components/WagmiProviders";
+import { compose } from "@/lib/compose";
 import { cn } from "@/lib/utils";
 
+import "@rainbow-me/rainbowkit/styles.css";
 import "./globals.css";
 
 const inter = FontSans({
@@ -27,13 +31,26 @@ export const metadata: Metadata = {
   description: "Sell accounts via smart contracts!",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+interface RootLayoutProps {
   children: React.ReactNode;
-}>) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
+  const cookie = headers().get("cookie");
+
+  const themProviderProps: Omit<ThemeProviderProps, "children"> = {
+    attribute: "class",
+    defaultTheme: "dark",
+    disableTransitionOnChange: true,
+  };
+
+  const Providers = compose([
+    [WagmiProviders, { cookie }],
+    [ThemeProvider, themProviderProps],
+  ]);
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
@@ -41,17 +58,10 @@ export default function RootLayout({
           courierPrime.variable,
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <WalletProvider>
-            <Header />
-            {children}
-          </WalletProvider>
-        </ThemeProvider>
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   );
