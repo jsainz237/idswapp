@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { formatEther } from "ethers";
-import { Coins, ExternalLink } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Coins, ExternalLink, Eye } from "lucide-react";
+import Link from "next/link";
 import { useReadContract } from "wagmi";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -23,17 +24,82 @@ interface IAccount {
   _owner: string;
   _contract: string;
   description: string;
-  price: number;
+  price: bigint;
   purchasable: boolean;
 }
 
 export default function AccountsPage() {
+  const [maxPrice, setMaxPrice] = useState<number | undefined>();
+  const [search, setSearch] = useState<string | undefined>();
+  const [purchasable, setPurchasable] = useState<boolean>(false);
+
   const { data: accounts } = useReadContract({
     abi: IDSwappFactory.abi,
     address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
     functionName: "getAll",
     args: [],
   });
+
+  const displayPrice = (price: bigint) => {
+    if (price === 0n) {
+      return "Free";
+    }
+
+    return `${formatPrice(price)} BNB`;
+  };
+
+  const displayDescription = (description: string) => {
+    if (description.length > 60) {
+      return `${description.slice(0, 60)}...`;
+    }
+
+    return description;
+  };
+
+  const renderAddressLink = (address: IAccount["_contract"]) => (
+    <Link href={`https://bscscan.com/address/${address}`} target="_blank">
+      <Button variant="link" className="flex items-center pl-0">
+        {formatAddress(address)}
+        <ExternalLink className="ml-2 size-4" />
+      </Button>
+    </Link>
+  );
+
+  const renderPrice = (account: IAccount) => {
+    if (!account.purchasable) {
+      return <span className="text-muted-foreground">Not for sale</span>;
+    }
+
+    return (
+      <span className="flex items-center">
+        <Coins className="mr-2 size-4" />
+        {displayPrice(account.price)}
+      </span>
+    );
+  };
+
+  const filteredAccounts = useMemo(() => {
+    return (accounts as IAccount[])?.filter((account: IAccount) => {
+      if (purchasable && !account.purchasable) {
+        return false;
+      }
+
+      if (maxPrice && account.price > maxPrice * 1e18) {
+        return false;
+      }
+
+      if (
+        search &&
+        !account._contract.includes(search) &&
+        !account._owner.includes(search) &&
+        !account.description.includes(search)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [accounts, maxPrice, purchasable, search]);
 
   return (
     <div className="p-header container">
@@ -43,17 +109,29 @@ export default function AccountsPage() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Toggle variant="outline" aria-label="Only purchasable accounts">
+          <Toggle
+            variant="outline"
+            aria-label="Only purchasable accounts"
+            onClick={() => setPurchasable(!purchasable)}
+          >
             <Coins className="size-4" />
           </Toggle>
           <Input
             className="w-40 after:content-['wei']"
             type="number"
-            placeholder="Max price (ETH)"
-            step="0.0001"
+            placeholder="Max price (BNB)"
+            step="0.01"
             min={0.0}
+            value={maxPrice}
+            onChange={e => setMaxPrice(parseFloat(e.target.value))}
           />
-          <Input className="w-80" type="search" placeholder="Search" />
+          <Input
+            className="w-80"
+            type="search"
+            placeholder="Search"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </div>
       </div>
 
@@ -64,34 +142,28 @@ export default function AccountsPage() {
             <TableHead>Owner</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Price</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="w-[120px]" />
           </TableRow>
         </TableHeader>
         <TableBody>
-          {accounts?.map((account: IAccount) => (
+          {filteredAccounts?.map((account: IAccount) => (
             <TableRow key={account._contract}>
               <TableCell className="font-medium" title={account._contract}>
-                <span className="flex items-center">
-                  {formatAddress(account._contract)}
-                  <ExternalLink className="ml-2 size-4" />
-                </span>
+                {renderAddressLink(account._contract)}
               </TableCell>
               <TableCell className="font-medium">
-                <span className="flex items-center">
-                  {formatAddress(account._owner)}
-                  <ExternalLink className="ml-2 size-4" />
-                </span>
+                {renderAddressLink(account._owner)}
               </TableCell>
-              <TableCell>{account.description}</TableCell>
+              <TableCell title={account.description}>
+                {displayDescription(account.description)}
+              </TableCell>
+              <TableCell>{renderPrice(account)}</TableCell>
               <TableCell>
-                {account.purchasable ? (
-                  <span className="flex items-center">
-                    <Coins className="mr-2 size-4" />
-                    {formatPrice(account.price)} ETH
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground">Not for sale</span>
-                )}
+                <Link href={`/accounts/${account._contract}`} target="_blank">
+                  <Button title="view" size="sm" variant="ghost">
+                    <Eye className="size-4" />
+                  </Button>
+                </Link>
               </TableCell>
             </TableRow>
           ))}

@@ -14,7 +14,7 @@ export default function Home() {
         <div className="mt-60 flex flex-col items-center">
           <Image src="/logo.svg" width={500} height={200} alt="IDSwapp Logo" />
           <DecodeText className="mt-8" size={26} animationTime={1500}>
-            DECENTRALIZED EMAIL ACCOUNTS
+            DECENTRALIZED ACCOUNT TRADING
           </DecodeText>
         </div>
 
