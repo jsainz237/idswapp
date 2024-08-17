@@ -68,6 +68,12 @@
   }
 }
 
+@layer utilities {
+  .p-header {
+    @apply pt-[87px];
+  }
+}
+
 @layer components {
   .type-h1 {
     @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
