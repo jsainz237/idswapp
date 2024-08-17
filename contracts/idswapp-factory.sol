@@ -3,7 +3,6 @@ pragma solidity ^0.8.24;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import "./idswapp-account.sol";
 
 contract IDSwappFactory is Ownable, AccessControl {
@@ -12,7 +11,7 @@ contract IDSwappFactory is Ownable, AccessControl {
         address _contract;
 
         string description;
-        uint32 price;
+        uint256 price;
         bool purchasable;
     }
 
@@ -39,7 +38,7 @@ contract IDSwappFactory is Ownable, AccessControl {
     function _setSubdomainProperties(uint32 subdomain, address owner, IDSwappAccount account) private {
         accountMap[subdomain] = PublicAccountInfo({
             _owner: owner,
-            _contract: msg.sender,
+            _contract: address(account),
             description: account.description(),
             price: account.price(),
             purchasable: account.purchasable()
@@ -69,16 +68,12 @@ contract IDSwappFactory is Ownable, AccessControl {
         return accountMap[subdomain];
     }
 
-    function getAll(uint32 limit, uint32 offset) public view returns (PublicAccountInfo[] memory) {
+    function getAll() public view returns (PublicAccountInfo[] memory) {
         uint32 count = subdomainCounter - 1000;
 
-        if (offset >= count) {
-            return new PublicAccountInfo[](0);
-        }
-
-        PublicAccountInfo[] memory accts = new PublicAccountInfo[](Math.min(limit, count - offset));
-        for (uint32 i = offset; i < count && i < offset + limit; i++) {
-            accts[i - offset] = accountMap[i + 1000];
+        PublicAccountInfo[] memory accts = new PublicAccountInfo[](count);
+        for (uint32 i = 0; i < count; i++) {
+            accts[i] = accountMap[i + 1000];
         }
         return accts;
     }

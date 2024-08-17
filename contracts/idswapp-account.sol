@@ -13,7 +13,7 @@ contract IDSwappAccount is Ownable {
     string private _forwardEmail;
     
     string public description;
-    uint32 public price;
+    uint256 public price;
     bool public purchasable;
 
     constructor(address owner, uint32 subdomain, IDSwappFactory factoryContract) Ownable(owner) {
@@ -48,7 +48,7 @@ contract IDSwappAccount is Ownable {
     function setDetails(
         string calldata email,
         string calldata description_,
-        uint32 price_,
+        uint256 price_,
         bool purchasable_
     ) public onlyOwner {
         _forwardEmail = email;
