@@ -12,7 +12,7 @@ describe("IDSwappAccount", () => {
       await hre.ethers.getContractFactory("IDSwappAccount");
 
     const factory = await hre.ethers.deployContract("IDSwappFactory");
-    const tx = await factory.connect(user).createAccount();
+    const tx = await factory.connect(user).createAccount("test@email.com");
     const event = await getEvent(tx, "IDSwappAccountCreated");
 
     expect(event).to.exist;

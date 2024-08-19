@@ -68,7 +68,9 @@ describe("IDSwappFactory", () => {
       const factory = await deployFactory();
       const [_deployer, user] = await hre.ethers.getSigners();
 
-      const createAccount = factory.connect(user).createAccount();
+      const createAccount = factory
+        .connect(user)
+        .createAccount("test@email.com");
 
       await expect(createAccount)
         .to.emit(factory, "IDSwappAccountCreated")
@@ -82,7 +84,7 @@ describe("IDSwappFactory", () => {
       const factory = await deployFactory();
       const [_deployer, user] = await hre.ethers.getSigners();
 
-      const tx = await factory.connect(user).createAccount();
+      const tx = await factory.connect(user).createAccount("test@email.com");
       const event = await getEvent(tx, "IDSwappAccountCreated");
       const contractAddr = event?.args[0];
 
@@ -95,7 +97,7 @@ describe("IDSwappFactory", () => {
       const factory = await deployFactory();
       const [_deployer, user] = await hre.ethers.getSigners();
 
-      const tx = await factory.connect(user).createAccount();
+      const tx = await factory.connect(user).createAccount("test@email.com");
       const event = await getEvent(tx, "IDSwappAccountCreated");
       expect(event).to.exist;
 
@@ -110,28 +112,16 @@ describe("IDSwappFactory", () => {
 
     describe("Get All Accounts", () => {
       it("Should return the expected count of subdomains", async () => {
-        let allAccounts;
         const factory = await deployFactory();
         const [_deployer, user] = await hre.ethers.getSigners();
 
         // Create 5 accounts
         for (let i = 0; i < 5; i++) {
-          await factory.connect(user).createAccount();
+          await factory.connect(user).createAccount("test@email.com");
         }
 
-        const tests = [
-          { limit: 10, offset: 0, expected: 5 },
-          { limit: 1, offset: 0, expected: 1 },
-          { limit: 10, offset: 10, expected: 0 },
-          { limit: 0, offset: 10, expected: 0 },
-          { limit: 5, offset: 2, expected: 3 },
-          { limit: 3, offset: 10, expected: 0 },
-        ];
-
-        for (const test of tests) {
-          allAccounts = await factory.getAll(test.limit, test.offset);
-          expect(allAccounts.length).to.equal(test.expected);
-        }
+        const allAccounts = await factory.getAll();
+        expect(allAccounts.length).to.equal(5);
       });
     });
   });

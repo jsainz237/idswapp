@@ -16,8 +16,14 @@ contract IDSwappAccount is Ownable {
     uint256 public price;
     bool public purchasable;
 
-    constructor(address owner, uint32 subdomain, IDSwappFactory factoryContract) Ownable(owner) {
+    constructor(
+        address owner,
+        uint32 subdomain,
+        string memory email,
+        IDSwappFactory factoryContract
+    ) Ownable(owner) {
         _subdomain = subdomain;
+        _forwardEmail = email;
         idSwappFactory = factoryContract;
     }
 

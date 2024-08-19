@@ -79,10 +79,10 @@ contract IDSwappFactory is Ownable, AccessControl {
     }
 
     /** Creates an account contract, then whiteslists that contract to the root's whitelisted addresses */
-    function createAccount() public returns (address) {
+    function createAccount(string calldata email) public returns (address) {
         address owner = msg.sender;
     
-        IDSwappAccount account = new IDSwappAccount(owner, subdomainCounter, this);
+        IDSwappAccount account = new IDSwappAccount(owner, subdomainCounter, email, this);
         _setSubdomainProperties(subdomainCounter, owner, account);
         _whitelistContract(address(account));
 
