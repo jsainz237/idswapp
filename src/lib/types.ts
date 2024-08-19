@@ -9,4 +9,5 @@ export interface IAccount {
 export interface ContractData<T> {
   data: T;
   isLoading: boolean;
+  error: any;
 }

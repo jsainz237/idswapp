@@ -65,6 +65,10 @@ contract IDSwappAccount is Ownable {
         _updateFactory();
     }
 
+    function publicDetails() public view returns (address, address, string memory, uint256, bool) {
+        return (address(this), owner(), description, price, purchasable);
+    }
+
     function privateDetails() public view returns (uint32, string memory) {
         if (idSwappFactory.isAdmin(msg.sender)) {
             return (_subdomain, _forwardEmail);

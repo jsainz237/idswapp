@@ -52,7 +52,12 @@ export default function AccountsPage() {
 
   const renderAddressLink = (address: IAccount["_contract"]) => (
     <div className="flex items-center">
-      <CopyButton variant="ghost" size="sm" text={address} />
+      <CopyButton
+        variant="ghost"
+        size="sm"
+        text={address}
+        description="Copied address to clipboard"
+      />
       <Link href={`https://bscscan.com/address/${address}`} target="_blank">
         <Button variant="link" className="flex min-w-[140px] items-center pl-0">
           {formatAddress(address)}

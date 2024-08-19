@@ -6,9 +6,10 @@ import { useToast } from "./ui/use-toast";
 
 interface Props extends ButtonProps {
   text: string;
+  description: string;
 }
 
-export function CopyButton({ text, ...props }: Props) {
+export function CopyButton({ text, description, ...props }: Props) {
   const { toast } = useToast();
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -16,7 +17,7 @@ export function CopyButton({ text, ...props }: Props) {
     navigator.clipboard.writeText(text);
     setCopied(true);
 
-    toast({ description: "Copied address to clipboard" });
+    toast({ description });
     setTimeout(() => setCopied(false), 1500);
   };
 
