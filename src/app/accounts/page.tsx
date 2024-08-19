@@ -5,6 +5,7 @@ import { Coins, ExternalLink, Eye } from "lucide-react";
 import Link from "next/link";
 import { useReadContract } from "wagmi";
 
+import { CopyButton } from "@/components/Copy-Button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,17 +17,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Toggle } from "@/components/ui/toggle";
+import { IAccount } from "@/lib/types";
 import { formatAddress, formatPrice } from "@/lib/utils";
 
 import IDSwappFactory from "../../../artifacts/contracts/idswapp-factory.sol/IDSwappFactory.json";
-
-interface IAccount {
-  _owner: string;
-  _contract: string;
-  description: string;
-  price: bigint;
-  purchasable: boolean;
-}
 
 export default function AccountsPage() {
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
@@ -57,12 +51,15 @@ export default function AccountsPage() {
   };
 
   const renderAddressLink = (address: IAccount["_contract"]) => (
-    <Link href={`https://bscscan.com/address/${address}`} target="_blank">
-      <Button variant="link" className="flex items-center pl-0">
-        {formatAddress(address)}
-        <ExternalLink className="ml-2 size-4" />
-      </Button>
-    </Link>
+    <div className="flex items-center">
+      <CopyButton variant="ghost" size="sm" text={address} />
+      <Link href={`https://bscscan.com/address/${address}`} target="_blank">
+        <Button variant="link" className="flex min-w-[140px] items-center pl-0">
+          {formatAddress(address)}
+          <ExternalLink className="ml-2 size-4" />
+        </Button>
+      </Link>
+    </div>
   );
 
   const renderPrice = (account: IAccount) => {

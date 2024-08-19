@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 import { WagmiProviders } from "@/components/WagmiProviders";
 import { compose } from "@/lib/compose";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Providers>
           <Header />
           {children}
+          <Toaster />
         </Providers>
       </body>
     </html>
