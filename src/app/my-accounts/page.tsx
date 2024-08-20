@@ -90,9 +90,11 @@ function AccountCard({ account, isLoading }: AccountCardProps) {
             description="Copied address to clipboard"
           />
 
-          <Button size="sm" variant="ghost">
-            <Pencil className="size-4" />
-          </Button>
+          <Link href={`/my-accounts/${account._contract}/edit`}>
+            <Button size="sm" variant="ghost">
+              <Pencil className="size-4" />
+            </Button>
+          </Link>
         </div>
       </div>
 

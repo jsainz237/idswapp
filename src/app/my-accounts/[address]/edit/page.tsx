@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { formatEther } from "ethers";
 import { TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
 import { AccountSkeleton } from "@/components/Account-Skeleton";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 import { ContractData } from "@/lib/types";
 
 import IDSwappAccount from "../../../../../artifacts/contracts/idswapp-account.sol/IDSwappAccount.json";
@@ -54,6 +55,9 @@ export default function EditAccountPage({
   const router = useRouter();
   const { address: account } = useAccount();
   const [formData, setFormData] = useState<FormData>(initialFormData);
+  const { toast } = useToast();
+  const { writeContract } = useWriteContract();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { data: publicData, isLoading: publicLoading } = useReadContract({
     ...contractParams,
@@ -86,6 +90,31 @@ export default function EditAccountPage({
 
   if (isLoading) return <LoadingScreen />;
   if (!contract || owner !== account) return <AccessDeniedScreen />;
+
+  const saveChanges = () => {
+    writeContract(
+      {
+        ...contractParams,
+        functionName: "setDetails",
+        args: [
+          formData.email,
+          formData.description,
+          formData.price,
+          formData.purchasable,
+        ],
+      },
+      {
+        onSuccess: () =>
+          toast({ title: "Success", description: "Account details updated" }),
+        onError: err =>
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: err.message,
+          }),
+      },
+    );
+  };
 
   return (
     <div className="p-header container max-w-xl">
@@ -137,7 +166,11 @@ export default function EditAccountPage({
           </div>
 
           <div className="mt-12 flex space-x-4">
-            <ConfirmationDrawer>
+            <ConfirmationDrawer
+              open={drawerOpen}
+              setOpen={setDrawerOpen}
+              onConfirm={saveChanges}
+            >
               <Button>Save Changes</Button>
             </ConfirmationDrawer>
             <Button
@@ -181,23 +214,33 @@ function AccessDeniedScreen() {
 }
 
 interface ConfirmationDrawerProps {
-  onConfirm?: () => void;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+
+  onConfirm?: () => void | Promise<void>;
   onCancel?: () => void;
   children: React.ReactNode;
 }
 
 function ConfirmationDrawer({
+  open,
+  setOpen,
   onConfirm,
   onCancel,
   children,
 }: ConfirmationDrawerProps) {
+  const onConfirmClick = async () => {
+    await onConfirm?.();
+    setOpen(false);
+  };
+
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
-            <DrawerTitle className="flex max-sm:justify-center items-center">
+            <DrawerTitle className="flex items-center max-sm:justify-center">
               <TriangleAlert className="mr-4 text-yellow-500" />
               Gas Fee Warning
             </DrawerTitle>
@@ -208,9 +251,13 @@ function ConfirmationDrawer({
           </DrawerHeader>
           <div className="my-4" />
           <DrawerFooter>
-            <Button className="w-full" onClick={onConfirm}>Confirm and save</Button>
+            <Button className="w-full" onClick={onConfirmClick}>
+              Confirm and save
+            </Button>
             <DrawerClose asChild>
-              <Button variant="outline" className="w-full" onClick={onConfirm}>Cancel</Button>
+              <Button variant="outline" className="w-full" onClick={onCancel}>
+                Cancel
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </div>
