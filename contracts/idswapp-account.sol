@@ -28,9 +28,10 @@ contract IDSwappAccount is Ownable {
     }
 
     function _resetContract() private {
-        delete price;
         delete _forwardEmail;
-        purchasable = false;
+        delete description;
+        delete price;
+        delete purchasable;
     }
 
     function _updateFactory() private {
