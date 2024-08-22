@@ -5,6 +5,7 @@ import { Coins, ExternalLink, Eye } from "lucide-react";
 import Link from "next/link";
 import { useReadContract } from "wagmi";
 
+import { IDSwappFactoryAbi } from "@/abi-gen";
 import { CopyButton } from "@/components/Copy-Button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,15 +21,13 @@ import { Toggle } from "@/components/ui/toggle";
 import { IAccount } from "@/lib/types";
 import { formatAddress, formatPrice } from "@/lib/utils";
 
-import IDSwappFactory from "../../../artifacts/contracts/idswapp-factory.sol/IDSwappFactory.json";
-
 export default function AccountsPage() {
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
   const [search, setSearch] = useState<string | undefined>();
   const [purchasable, setPurchasable] = useState<boolean>(false);
 
   const { data: accounts } = useReadContract({
-    abi: IDSwappFactory.abi,
+    abi: IDSwappFactoryAbi,
     address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
     functionName: "getAll",
     args: [],

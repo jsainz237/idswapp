@@ -6,6 +6,7 @@ import { Coins, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
+import { IDSwappAccountAbi } from "@/abi-gen";
 import { CopyButton } from "@/components/Copy-Button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -21,45 +22,35 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
-import { ContractData } from "@/lib/types";
 import { cn, formatAddress, formatPrice } from "@/lib/utils";
 
-import IDSwappAccount from "../../../../artifacts/contracts/idswapp-account.sol/IDSwappAccount.json";
-
-export default function ContractPage({
-  params,
-}: {
-  params: { address: string };
-}) {
-  const contractAddress = params.address;
-  const contractParams = {
-    abi: IDSwappAccount.abi,
-    address: contractAddress as `0x${string}`,
+interface ContractPageProps {
+  params: {
+    address: string;
   };
+}
+
+export default function ContractPage({ params }: ContractPageProps) {
+  const contractAddress = params.address as `0x${string}`;
 
   const { toast } = useToast();
   const { address: walletAddress } = useAccount();
-  const { writeContract, error: writeError } = useWriteContract();
+  const { writeContract } = useWriteContract();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const {
     data: publicData,
-    error,
     isLoading,
     refetch,
   } = useReadContract({
-    ...contractParams,
+    abi: IDSwappAccountAbi,
+    address: contractAddress,
     functionName: "publicDetails",
-  }) as ContractData<[string, string, string, bigint, boolean]>;
-
-  if (error || writeError) {
-    console.error(error || writeError);
-    return null;
-  }
-
-  const [_contract, owner, description, price, purchasable] = publicData || [];
+  });
 
   if (isLoading) return <ContractPageSkeleton />;
+
+  const [_contract, owner, description, price, purchasable] = publicData!;
 
   const purchaseDisabled = !purchasable || owner === walletAddress;
   const ctaText = () => {
@@ -71,14 +62,14 @@ export default function ContractPage({
   const purchaseAccount = (email: string) => {
     writeContract(
       {
-        ...contractParams,
+        abi: IDSwappAccountAbi,
+        address: contractAddress,
         functionName: "purchaseAccount",
         args: [email],
         value: price,
       },
       {
-        onSuccess: (...params) => {
-          console.log(params);
+        onSuccess: () => {
           refetch();
           toast({ description: "Account purchased successfully" });
         },

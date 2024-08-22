@@ -5,25 +5,23 @@ import { Coins, ExternalLink, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useAccount, useReadContract } from "wagmi";
 
+import { IDSwappAccountAbi, IDSwappFactoryAbi } from "@/abi-gen";
 import { AccountSkeleton } from "@/components/Account-Skeleton";
 import { CopyButton } from "@/components/Copy-Button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ContractData, IAccount } from "@/lib/types";
+import { IAccount } from "@/lib/types";
 import { cn, formatAddress } from "@/lib/utils";
-
-import IDSwappAccount from "../../../artifacts/contracts/idswapp-account.sol/IDSwappAccount.json";
-import IDSwappFactory from "../../../artifacts/contracts/idswapp-factory.sol/IDSwappFactory.json";
 
 export default function MyAccountsPage() {
   const wallet = useAccount();
 
   const { data: accounts, isLoading } = useReadContract({
-    abi: IDSwappFactory.abi,
+    abi: IDSwappFactoryAbi,
     address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
     functionName: "getAll",
     args: [],
-  }) as ContractData<IAccount[]>;
+  });
 
   if (!wallet.address) {
     return (
@@ -65,10 +63,10 @@ interface AccountCardProps {
 
 function AccountCard({ account, isLoading }: AccountCardProps) {
   const { data: privateDetails, isLoading: detailsLoading } = useReadContract({
-    abi: IDSwappAccount.abi,
+    abi: IDSwappAccountAbi,
     address: account._contract as `0x${string}`,
     functionName: "privateDetails",
-  }) as ContractData<[number, string]>;
+  });
 
   const loading = isLoading || detailsLoading;
   const [subdomain, forwardEmail] = privateDetails || [];

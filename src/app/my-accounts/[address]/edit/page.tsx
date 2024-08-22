@@ -6,6 +6,7 @@ import { TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
+import { IDSwappAccountAbi } from "@/abi-gen";
 import { AccountSkeleton } from "@/components/Account-Skeleton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -24,7 +25,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { ContractData } from "@/lib/types";
 
 import IDSwappAccount from "../../../../../artifacts/contracts/idswapp-account.sol/IDSwappAccount.json";
 
@@ -42,16 +42,13 @@ const initialFormData: FormData = {
   purchasable: false,
 };
 
-export default function EditAccountPage({
-  params,
-}: {
-  params: { address: string };
-}) {
-  const contractParams = {
-    abi: IDSwappAccount.abi,
-    address: params.address as `0x${string}`,
+interface EditAccountPageProps {
+  params: {
+    address: string;
   };
+}
 
+export default function EditAccountPage({ params }: EditAccountPageProps) {
   const router = useRouter();
   const { address: account } = useAccount();
   const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -60,14 +57,16 @@ export default function EditAccountPage({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { data: publicData, isLoading: publicLoading } = useReadContract({
-    ...contractParams,
+    abi: IDSwappAccountAbi,
+    address: params.address as `0x${string}`,
     functionName: "publicDetails",
-  }) as ContractData<[string, string, string, bigint, boolean]>;
+  });
 
   const { data: privateData, isLoading: privateLoading } = useReadContract({
-    ...contractParams,
+    abi: IDSwappAccountAbi,
+    address: params.address as `0x${string}`,
     functionName: "privateDetails",
-  }) as ContractData<[string, string]>;
+  });
 
   const [contract, owner, description, price, purchasable] = publicData || [];
   const [subdomain, email] = privateData || [];
@@ -76,12 +75,8 @@ export default function EditAccountPage({
   useEffect(() => {
     if (isLoading) return;
 
-    setFormData({
-      email,
-      description,
-      price,
-      purchasable,
-    });
+    const formData = { email, description, price, purchasable };
+    setFormData(formData as FormData);
   }, [email, description, price, purchasable, isLoading]);
 
   const updateFormField = (field: keyof FormData, value: any) => {
@@ -94,7 +89,8 @@ export default function EditAccountPage({
   const saveChanges = () => {
     writeContract(
       {
-        ...contractParams,
+        abi: IDSwappAccountAbi,
+        address: params.address as `0x${string}`,
         functionName: "setDetails",
         args: [
           formData.email,

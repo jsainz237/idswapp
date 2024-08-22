@@ -5,10 +5,3 @@ export interface IAccount {
   price: bigint;
   purchasable: boolean;
 }
-
-export interface ContractData<T> {
-  data: T;
-  isLoading: boolean;
-  error: any;
-  refetch: (...args: any[]) => any;
-}
