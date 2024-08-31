@@ -24,6 +24,7 @@
     --input: 220 13% 91%;
     --ring: 224 71.4% 4.1%;
     --radius: 0.5rem;
+    --header: 72px;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -70,7 +71,11 @@
 
 @layer utilities {
   .p-header {
-    @apply pt-[87px];
+    @apply pt-[var(--header)];
+  }
+
+  .min-screen-no-header {
+    @apply min-h-[calc(100vh-var(--header))];
   }
 }
 

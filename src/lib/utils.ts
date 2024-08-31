@@ -13,3 +13,5 @@ export function formatAddress(address: string) {
 export function formatPrice(price: BigNumberish) {
   return parseFloat(formatEther(price)).toFixed(5);
 }
+
+export const isEven = (num: number) => num % 2 === 0;
