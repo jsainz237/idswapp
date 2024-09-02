@@ -41,8 +41,15 @@ export default function MyAccountsPage() {
   return (
     <div className="p-header container">
       <div className="flex flex-col items-start pt-10">
-        <h2 className="type-h2 mt-10">Your IDSwapp Accounts</h2>
-        <div className="grid w-full grid-cols-3 gap-4 pt-10">
+        <h2 className="type-h2 mt-10 font-mono">Your IDSwapp Accounts</h2>
+        <div className="grid w-full grid-cols-3 gap-4 py-10">
+          {isLoading && (
+            <>
+              <AccountSkeleton />
+              <AccountSkeleton />
+              <AccountSkeleton />
+            </>
+          )}
           {userAccounts?.map((account: IAccount) => (
             <AccountCard
               key={account._contract}
@@ -75,6 +82,8 @@ function AccountCard({ account, isLoading }: AccountCardProps) {
     return <AccountSkeleton />;
   }
 
+  const accountEmail = `account+${subdomain}@idswapp.com`;
+
   return (
     <Card className="w-full px-6 py-4">
       <div className="flex items-center justify-between">
@@ -86,6 +95,7 @@ function AccountCard({ account, isLoading }: AccountCardProps) {
             size="sm"
             text={account._contract}
             description="Copied address to clipboard"
+            title="Copy Address"
           />
 
           <Link href={`/my-accounts/${account._contract}/edit`}>
@@ -106,18 +116,33 @@ function AccountCard({ account, isLoading }: AccountCardProps) {
         </Button>
       </Link>
 
-      <h4 className="type-h4 mt-12 font-mono">Forward Email</h4>
+      <div className="group">
+        <h4 className="type-h4 mt-10 font-mono">IDSwapp Email</h4>
+        <div className="flex items-center">
+          <p className="mr-2">{accountEmail}</p>
+          <CopyButton
+            variant="ghost"
+            size="sm"
+            text={accountEmail}
+            description="Copied email to clipboard"
+            title="Copy Email"
+            className="opacity-0 group-hover:opacity-100"
+          />
+        </div>
+      </div>
+
+      <h4 className="type-h4 mt-6 font-mono">Forward Email</h4>
       <p>{forwardEmail}</p>
 
-      <h4 className="type-h4 mt-8 font-mono">Description</h4>
+      <h4 className="type-h4 mt-6 font-mono">Description</h4>
       <p className={cn({ "text-muted-foreground": !account.description })}>
         {account.description || "No description for account"}
       </p>
 
-      <h4 className="type-h4 mt-8 font-mono">Price</h4>
+      <h4 className="type-h4 mt-6 font-mono">Price</h4>
       <p>{formatEther(account.price)} BNB</p>
 
-      <h4 className="type-h4 mt-8 font-mono">Purchase Status</h4>
+      <h4 className="type-h4 mt-6 font-mono">Purchase Status</h4>
       <p
         className={cn("flex items-center", {
           "text-muted-foreground": !account.purchasable,
