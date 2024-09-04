@@ -9,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useWindow } from "@/app/hooks/useWindow";
+import { useWindow } from "@/hooks/useWindow";
 import { cn } from "@/lib/utils";
 
 import {
