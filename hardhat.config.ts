@@ -4,6 +4,7 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import IDSwappAccount from "./artifacts/contracts/idswapp-account.sol/IDSwappAccount.json";
 import IDSwappFactory from "./artifacts/contracts/idswapp-factory.sol/IDSwappFactory.json";
 
+import "@nomicfoundation/hardhat-ignition-ethers";
 import "@nomicfoundation/hardhat-toolbox";
 
 const config: HardhatUserConfig = {
