@@ -26,7 +26,15 @@ export const ExpandableCards = ({ children }: CardScrollContainerProps) => {
     setScrollingCardId(id);
     const cardElement = document.getElementById(`card-${id}`);
     if (cardElement) {
-      cardElement.scrollIntoView({ behavior: "smooth", inline: "center" });
+      // Check if screen width is larger than Tailwind md breakpoint (768px)
+      const isLgScreen = window.innerWidth >= 1024;
+
+      // Only scroll horizontally on md+ screens
+      cardElement.scrollIntoView({
+        behavior: "smooth",
+        block: isLgScreen ? "center" : "nearest",
+        inline: isLgScreen ? "center" : "nearest",
+      });
     }
 
     // Wait for scrolling to complete before expanding
@@ -39,7 +47,7 @@ export const ExpandableCards = ({ children }: CardScrollContainerProps) => {
   return (
     <div
       ref={containerRef}
-      className="flex w-full snap-x snap-mandatory gap-4 space-x-4 overflow-x-auto px-2 py-4"
+      className="flex w-full snap-x snap-mandatory gap-4 px-2 py-4 max-lg:snap-y max-lg:flex-col lg:space-x-4 lg:overflow-x-auto"
     >
       {Children.map(children, (child, idx) => {
         const key = idx.toString();
@@ -51,8 +59,8 @@ export const ExpandableCards = ({ children }: CardScrollContainerProps) => {
             key={key}
             id={`card-${key}`}
             className={cn(
-              "shrink-0 snap-center transition-all duration-300 ease-in-out",
-              isExpanded ? "w-full" : "w-[40vw]",
+              "shrink-0 snap-center transition-all duration-300 ease-in-out max-lg:h-fit h-full",
+              isExpanded ? "w-full max-lg:h-[300px]" : "w-[40vw] max-lg:w-full",
               isScrolling ? "scale-105" : "",
             )}
           >

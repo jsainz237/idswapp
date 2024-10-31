@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BookOpenText, Code, ExternalLink } from "lucide-react";
+import { Book, BookOpenText, Code, ExternalLink } from "lucide-react";
 
 import { cn, formatAddress } from "@/lib/utils";
 
@@ -15,6 +15,14 @@ import {
 import { Skeleton } from "../ui/skeleton";
 
 const resources = [
+  {
+    title: "How it works",
+    shortDescription:
+      "Generate an IDSwapp ID. Link external accounts. Sell you accounts via smart contract",
+    longDescription:
+      "When you create an account, an IDSwapp Account smart contract is automatically generated and owned by you. You can link an external account/email address to your IDSwapp ID, set your price, and sell your IDSwapp ID via smart contract.",
+    address: "",
+  },
   {
     title: "IDSwapp Factory",
     shortDescription:
@@ -37,7 +45,7 @@ export function ResourcesSection() {
   return (
     <div className="container flex w-full flex-col items-center py-10">
       <h2 className="type-h2 mb-8 font-mono">Resources</h2>
-      <div className="flex w-full gap-4 overflow-x-auto">
+      <div className="flex w-full gap-4 lg:overflow-x-auto">
         <ExpandableCards>
           {resources.map((resource, idx) => (
             <ResourceCard key={idx} {...resource} />
@@ -74,6 +82,8 @@ const ResourceCard = ({
 
   const description = isExpanded ? longDescription : shortDescription;
 
+  const BookIcon = isExpanded ? Book : BookOpenText;
+
   const renderSkeleton = () => (
     <>
       <Skeleton className="mt-2 h-4 w-1/2" />
@@ -82,22 +92,24 @@ const ResourceCard = ({
   );
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent className={cn({ "text-muted-foreground": !isExpanded })}>
-        {isAnimating ? renderSkeleton() : description}
-      </CardContent>
+    <Card className="flex min-h-full flex-col justify-between">
+      <div>
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent className={cn({ "text-muted-foreground": !isExpanded })}>
+          {isAnimating ? renderSkeleton() : description}
+        </CardContent>
+      </div>
       <CardFooter>
         <div className="flex w-full items-center justify-between">
           <Button
             onClick={handleCardClick}
             size="sm"
             variant="ghost"
-            title="Read more..."
+            title={isExpanded ? "Minimize" : "Read more..."}
           >
-            <BookOpenText className="size-4" />
+            <BookIcon className="size-4" />
           </Button>
           <div className="flex items-center gap-2">
             <Button
