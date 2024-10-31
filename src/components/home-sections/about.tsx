@@ -28,10 +28,10 @@ export function AboutSection() {
   ];
 
   return (
-    <div className="min-screen-no-header flex flex-col items-center bg-gray-900 py-8">
+    <div className="min-screen-no-header flex flex-col items-center bg-gray-900 px-4 py-8 sm:px-6">
       <HightlightText
         animationTiming={500}
-        className="type-h2 mb-24 mt-10 font-mono"
+        className="type-h2 mb-12 mt-6 text-center font-mono max-sm:text-2xl sm:mb-24 sm:mt-10"
       >
         Accounts with IDSwapp
       </HightlightText>
@@ -39,22 +39,30 @@ export function AboutSection() {
         {sections.map((section, idx) => (
           <div
             key={idx}
-            className={cn("mb-24 flex flex-col", {
-              "items-end text-right": !isEven(idx),
+            className={cn("mb-12 sm:mb-24 flex flex-col", {
+              "items-center sm:items-end text-center sm:text-right":
+                !isEven(idx),
+              "items-center sm:items-start text-center sm:text-left":
+                isEven(idx),
             })}
           >
             <AboutStep step={idx + 1}>
               <div>
                 <div
-                  className={cn("flex items-end", {
-                    "justify-end": !isEven(idx),
+                  className={cn("flex items-center sm:items-end", {
+                    "justify-center sm:justify-end": !isEven(idx),
+                    "justify-center sm:justify-start": isEven(idx),
                   })}
                 >
-                  {isEven(idx) && <section.icon size={28} className="mr-4" />}
+                  {isEven(idx) && (
+                    <section.icon className="mr-4 size-5 sm:size-7" />
+                  )}
                   <p className="type-large">{section.title}</p>
-                  {!isEven(idx) && <section.icon size={28} className="ml-4" />}
+                  {!isEven(idx) && (
+                    <section.icon className="ml-4 size-5 sm:size-7" />
+                  )}
                 </div>
-                <p className="type-small mt-4 text-muted-foreground">
+                <p className="type-small mt-4 max-w-sm text-muted-foreground">
                   {section.description}
                 </p>
               </div>
@@ -89,15 +97,29 @@ function AboutStep({
 
   return (
     <EaseIn
-      className={cn("flex items-center", { "flex-row-reverse": isEven(step) })}
+      className={cn("flex flex-col sm:flex-row items-center gap-2", {
+        "sm:flex-row-reverse": isEven(step),
+      })}
       offset={{ x: 0, y: 50 }}
       onViewportEnter={onEnterView}
     >
-      <div className={cn("mr-4 -space-y-10", { "mr-0 ml-4": isEven(step) })}>
-        <DecodeText ref={ref1} className="font-mono" {...decodeTextProps}>
+      <div
+        className={cn("text-center sm:text-left sm:mr-4", {
+          "sm:mr-0 sm:ml-4": isEven(step),
+        })}
+      >
+        <DecodeText
+          ref={ref1}
+          className="mb-2 font-mono text-4xl max-sm:hidden sm:text-[60px]"
+          {...decodeTextProps}
+        >
           STEP
         </DecodeText>
-        <DecodeText ref={ref2} className="font-mono" {...decodeTextProps}>
+        <DecodeText
+          ref={ref2}
+          className="font-mono text-4xl sm:text-[60px]"
+          {...decodeTextProps}
+        >
           {`0x0${step}`}
         </DecodeText>
       </div>
