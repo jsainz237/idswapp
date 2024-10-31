@@ -4,7 +4,7 @@ import React from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useScroll, useSpring, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
-import { PlusCircle } from "lucide-react";
+import { Menu, PlusCircle, Wallet } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,6 +12,7 @@ import { usePathname } from "next/navigation";
 import { useWindow } from "@/hooks/useWindow";
 import { cn } from "@/lib/utils";
 
+import { Button } from "./ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -21,6 +22,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 interface Link {
   title: React.ReactNode;
@@ -121,19 +123,93 @@ export function Header() {
     );
   };
 
+  const MobileNav = () => (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="md:hidden">
+          <Menu className="size-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left">
+        <Image
+          src="/logo.svg"
+          alt="IDSwapp"
+          width={200}
+          height={200}
+          className="w-[150px] md:w-[200px]"
+        />
+        <div className="flex flex-col-reverse gap-4 py-4">
+          {links.map((linkOrGroup, idx) => {
+            if ("title" in linkOrGroup) {
+              const link = linkOrGroup as Link;
+              return (
+                <Link
+                  key={idx}
+                  href={link.href}
+                  className="text-lg font-medium"
+                >
+                  {link.title}
+                </Link>
+              );
+            }
+            const group = linkOrGroup as LinkGroup;
+            return (
+              <div key={idx} className="flex flex-col gap-2">
+                {group.links.map((link, index) => (
+                  <Link key={index} href={link.href}>
+                    {link.title}
+                  </Link>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+
   return (
     <div className="fixed top-0 z-50 w-full bg-background py-4">
       <div className="container relative flex w-full items-center justify-between">
-        <NavigationMenu>
-          <NavigationMenuList>{links.map(renderNav)}</NavigationMenuList>
-        </NavigationMenu>
+        <div className="flex items-center gap-4">
+          <MobileNav />
+          <NavigationMenu className="hidden md:block">
+            <NavigationMenuList>{links.map(renderNav)}</NavigationMenuList>
+          </NavigationMenu>
+        </div>
+
         <div className="absolute inset-x-0 mx-auto w-fit overflow-hidden">
           <LogoWrapper>
-            <Image src="/logo.svg" alt="IDSwapp" width={200} height={200} />
+            <Image
+              src="/logo.svg"
+              alt="IDSwapp"
+              width={200}
+              height={200}
+              className="w-[150px] md:w-[200px]"
+            />
           </LogoWrapper>
         </div>
 
-        <ConnectButton accountStatus="address" chainStatus="icon" />
+        <div className="block sm:hidden">
+          <ConnectButton
+            label={(<Wallet />) as any as string}
+            accountStatus={{
+              smallScreen: "avatar",
+              largeScreen: "address",
+            }}
+            chainStatus="icon"
+          />
+        </div>
+
+        <div className="hidden sm:block">
+          <ConnectButton
+            accountStatus={{
+              smallScreen: "avatar",
+              largeScreen: "address",
+            }}
+            chainStatus="icon"
+          />
+        </div>
       </div>
     </div>
   );
