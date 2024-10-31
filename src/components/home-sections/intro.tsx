@@ -9,8 +9,17 @@ export function IntroSection() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-between">
       <div className="mt-60 flex flex-col items-center">
-        <Image src="/logo.svg" width={500} height={200} alt="IDSwapp Logo" />
-        <DecodeText className="mt-8" size={26} animationTime={1500}>
+        <Image
+          src="/logo.svg"
+          width={500}
+          height={200}
+          alt="IDSwapp Logo"
+          className="w-[280px] sm:w-[350px] md:w-[500px]"
+        />
+        <DecodeText
+          className="mt-8 text-sm sm:text-[18px] md:text-[26px]"
+          animationTime={1500}
+        >
           DECENTRALIZED ACCOUNT TRADING
         </DecodeText>
       </div>

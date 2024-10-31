@@ -12,7 +12,6 @@ import _ from "lodash";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  size?: number;
   animationTime?: number;
   animateOnRender?: boolean;
   className?: string;
@@ -22,7 +21,6 @@ interface Props {
 export const DecodeText = memo(
   forwardRef(function DecodeText(props: Props, ref) {
     const {
-      size = 14,
       animationTime = 2000,
       animateOnRender = true,
       className,
@@ -64,10 +62,7 @@ export const DecodeText = memo(
     });
 
     return (
-      <div
-        className={cn("flex whitespace-pre font-mono", className)}
-        style={{ fontSize: size }}
-      >
+      <div className={cn("flex whitespace-pre font-mono", className)}>
         {characters}
       </div>
     );
