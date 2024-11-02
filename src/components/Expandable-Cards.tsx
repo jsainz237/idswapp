@@ -60,7 +60,9 @@ export const ExpandableCards = ({ children }: CardScrollContainerProps) => {
             id={`card-${key}`}
             className={cn(
               "shrink-0 snap-center transition-all duration-300 ease-in-out max-lg:h-fit h-full",
-              isExpanded ? "w-full max-lg:h-[300px]" : "w-[40vw] max-lg:w-full",
+              isExpanded
+                ? "w-full max-xs:h-[450px] max-lg:h-[300px]"
+                : "w-[40vw] max-lg:w-full",
               isScrolling ? "scale-105" : "",
             )}
           >
