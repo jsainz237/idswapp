@@ -131,13 +131,15 @@ export function Header() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left">
-        <Image
-          src="/logo.svg"
-          alt="IDSwapp"
-          width={200}
-          height={200}
-          className="w-[150px] md:w-[200px]"
-        />
+        <Link href="/">
+          <Image
+            src="/logo.svg"
+            alt="IDSwapp"
+            width={200}
+            height={200}
+            className="w-[150px] md:w-[200px]"
+          />
+        </Link>
         <div className="flex flex-col-reverse gap-4 py-4">
           {links.map((linkOrGroup, idx) => {
             if ("title" in linkOrGroup) {
