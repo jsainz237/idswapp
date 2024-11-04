@@ -26,12 +26,18 @@ const config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
         mono: ["var(--font-mono)", ...fontFamily.mono],
       },
+      backgroundImage: {
+        "gradient-pink-blue":
+          "linear-gradient(90deg, rgba(250,185,218,1) 0%, rgba(208,173,221,1) 50%, rgba(250,185,218,1) 100%)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        "id-pink": "hsl(var(--id-pink))",
+        "id-blue": "hsl(var(--id-blue))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

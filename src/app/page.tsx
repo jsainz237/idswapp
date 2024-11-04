@@ -8,6 +8,7 @@ export default function Home() {
       <HomeSections.Intro />
       <HomeSections.About />
       <HomeSections.Resources />
+      <HomeSections.Generate />
     </main>
   );
 }
