@@ -28,7 +28,7 @@ export function AboutSection() {
   ];
 
   return (
-    <div className="min-screen-no-header flex flex-col items-center bg-gray-900 px-4 py-8 sm:px-6">
+    <div className="flex flex-col items-center bg-gray-900 px-4 py-8 sm:px-6">
       <HightlightText
         animationTiming={500}
         className="type-h2 mb-12 mt-6 text-center font-mono max-sm:text-2xl sm:mb-24 sm:mt-10"

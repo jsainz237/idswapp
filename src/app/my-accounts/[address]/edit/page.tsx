@@ -26,8 +26,6 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 
-import IDSwappAccount from "../../../../../artifacts/contracts/idswapp-account.sol/IDSwappAccount.json";
-
 interface FormData {
   email: string;
   description: string;

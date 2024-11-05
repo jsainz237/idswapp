@@ -103,13 +103,13 @@ export default function AccountsPage() {
   }, [accounts, maxPrice, purchasable, search]);
 
   return (
-    <div className="p-header container">
-      <div className="mt-20 flex items-center justify-between">
+    <div className="container">
+      <div className="mt-10 flex flex-col gap-4 sm:mt-20 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center">
           <h1 className="type-h2 font-mono">IDSwapp Accounts</h1>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center gap-2 sm:space-x-4">
           <Toggle
             variant="outline"
             aria-label="Only purchasable accounts"
@@ -118,7 +118,7 @@ export default function AccountsPage() {
             <Coins className="size-4" />
           </Toggle>
           <Input
-            className="w-40 after:content-['wei']"
+            className="after:content-['wei'] max-md:w-full md:flex-1 lg:w-40"
             type="number"
             placeholder="Max price (BNB)"
             step="0.01"
@@ -127,7 +127,7 @@ export default function AccountsPage() {
             onChange={e => setMaxPrice(parseFloat(e.target.value))}
           />
           <Input
-            className="w-80"
+            className="max-md:w-full md:flex-1 lg:w-80"
             type="search"
             placeholder="Search"
             value={search}
@@ -136,40 +136,42 @@ export default function AccountsPage() {
         </div>
       </div>
 
-      <Table className="mt-8">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Address</TableHead>
-            <TableHead>Owner</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead className="w-[120px]" />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredAccounts?.map((account: IAccount) => (
-            <TableRow key={account._contract}>
-              <TableCell className="font-medium" title={account._contract}>
-                {renderAddressLink(account._contract)}
-              </TableCell>
-              <TableCell className="font-medium">
-                {renderAddressLink(account._owner)}
-              </TableCell>
-              <TableCell title={account.description}>
-                {displayDescription(account.description)}
-              </TableCell>
-              <TableCell>{renderPrice(account)}</TableCell>
-              <TableCell>
-                <Link href={`/accounts/${account._contract}`} target="_blank">
-                  <Button title="view" size="sm" variant="ghost">
-                    <Eye className="size-4" />
-                  </Button>
-                </Link>
-              </TableCell>
+      <div className="mt-8 overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="min-w-[140px]">Address</TableHead>
+              <TableHead className="min-w-[140px]">Owner</TableHead>
+              <TableHead className="min-w-[200px]">Description</TableHead>
+              <TableHead className="min-w-[100px]">Price</TableHead>
+              <TableHead className="w-[120px]" />
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredAccounts?.map((account: IAccount) => (
+              <TableRow key={account._contract}>
+                <TableCell className="font-medium" title={account._contract}>
+                  {renderAddressLink(account._contract)}
+                </TableCell>
+                <TableCell className="font-medium">
+                  {renderAddressLink(account._owner)}
+                </TableCell>
+                <TableCell title={account.description}>
+                  {displayDescription(account.description)}
+                </TableCell>
+                <TableCell>{renderPrice(account)}</TableCell>
+                <TableCell>
+                  <Link href={`/accounts/${account._contract}`} target="_blank">
+                    <Button title="view" size="sm" variant="ghost">
+                      <Eye className="size-4" />
+                    </Button>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
