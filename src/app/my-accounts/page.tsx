@@ -25,7 +25,7 @@ export default function MyAccountsPage() {
 
   if (!wallet.address) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
+      <div className="flex h-full flex-col items-center justify-center self-stretch">
         <h2 className="type-h2 text-center">Wallet not connected</h2>
         <h4 className="type-h4 mt-2 text-center">
           Connect your wallet to view accounts you own

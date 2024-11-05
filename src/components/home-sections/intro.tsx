@@ -7,7 +7,7 @@ import { ScrollArrow } from "@/components/Scroll-Arrow";
 
 export function IntroSection() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between">
+    <div className="min-screen-no-header flex flex-col items-center justify-between">
       <div className="mt-60 flex flex-col items-center">
         <Image
           src="/logo.svg"
