@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import type { Metadata } from "next";
 
+import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -54,15 +55,18 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "bg-background font-sans antialiased",
           inter.variable,
           courierPrime.variable,
         )}
       >
         <Providers>
-          <Header />
-          {children}
-          <Toaster />
+          <div className="flex h-full min-h-screen flex-col pt-[var(--header)]">
+            <Header />
+            <main className="flex flex-1 flex-col">{children}</main>
+            <Toaster />
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>
