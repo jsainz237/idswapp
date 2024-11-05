@@ -28,13 +28,10 @@ const GenerateButton = ({ className }: { className?: string }) => {
     "flex items-center text-foreground transition-all duration-300";
 
   return (
-    <Link href="/new">
+    <Link className={className} href="/new">
       <Button
         id="generate-button"
-        className={cn(
-          className,
-          "group/button relative mt-16 overflow-hidden bg-background font-mono text-foreground transition-colors hover:bg-background",
-        )}
+        className="group/button relative mt-16 overflow-hidden bg-background font-mono text-foreground transition-colors hover:bg-background"
         size={"lg"}
       >
         <div className="absolute -bottom-full left-1/2 mx-auto h-[200%] w-full -translate-x-1/2 scale-0 rounded-full bg-primary transition-all duration-300 group-hover/button:w-full group-hover/button:scale-150" />
