@@ -89,81 +89,75 @@ export default function ContractPage({ params }: ContractPageProps) {
     `https://bscscan.com/address/${address}`;
 
   return (
-    <div className="p-header">
-      <div className="container mt-10 flex max-w-3xl items-start justify-start gap-4">
-        <Card className="flex flex-1 flex-col place-items-start p-8">
-          <h1 className="type-h2 font-mono">IDSwapp Account</h1>
+    <div className="container mt-10 flex max-w-3xl items-start justify-start gap-4 max-sm:flex-col sm:mt-36">
+      <Card className="flex flex-1 flex-col place-items-start p-8 max-sm:w-full">
+        <h1 className="type-h2 font-mono max-sm:text-center max-sm:text-2xl">
+          IDSwapp Account
+        </h1>
 
-          <h4 className="type-h4 mt-12 font-mono">Description</h4>
-          <p className={cn("mt-2", { "text-muted-foreground": !description })}>
-            {description || "No description for account"}
-          </p>
+        <h4 className="type-h4 mt-12 font-mono">Description</h4>
+        <p className={cn("mt-2", { "text-muted-foreground": !description })}>
+          {description || "No description for account"}
+        </p>
 
-          <h4 className="type-h4 mt-12 font-mono">Price</h4>
-          <p className={cn("mt-2", { "text-muted-foreground": !price })}>
-            {price ? `${formatEther(price)} BNB` : "N/A"}
-          </p>
+        <h4 className="type-h4 mt-12 font-mono">Price</h4>
+        <p className={cn("mt-2", { "text-muted-foreground": !price })}>
+          {price ? `${formatEther(price)} BNB` : "N/A"}
+        </p>
+      </Card>
+      <div className="mb-12 max-sm:w-full">
+        <Card className="p-8">
+          <div className="items-center">
+            <h4 className="type-h4 text-nowrap font-mono">Contract Address:</h4>
+
+            <div className="flex items-center space-x-1">
+              <CopyButton
+                variant="ghost"
+                size="sm"
+                text={contractAddress}
+                className="mr-2"
+                description="Copied address to clipboard"
+              />
+              <Link href={getBscHref(contractAddress)} target="_blank">
+                <Button className="pl-0" variant="link">
+                  {formatAddress(contractAddress)}
+                  <ExternalLink className="ml-2 size-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-8 items-center">
+            <h4 className="type-h4 text-nowrap font-mono">Current Owner:</h4>
+
+            <div className="flex items-center space-x-1">
+              <CopyButton
+                variant="ghost"
+                size="sm"
+                text={contractAddress}
+                className="mr-2"
+                description="Copied address to clipboard"
+              />
+              <Link href={getBscHref(owner as string)} target="_blank">
+                <Button className="pl-0" variant="link">
+                  {formatAddress(owner)}
+                  <ExternalLink className="ml-2 size-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </Card>
-        <div>
-          <Card className="p-8">
-            <div className="items-center">
-              <h4 className="type-h4 text-nowrap font-mono">
-                Contract Address:
-              </h4>
-
-              <div className="flex items-center space-x-1">
-                <CopyButton
-                  variant="ghost"
-                  size="sm"
-                  text={contractAddress}
-                  className="mr-2"
-                  description="Copied address to clipboard"
-                />
-                <Link href={getBscHref(contractAddress)} target="_blank">
-                  <Button className="pl-0" variant="link">
-                    {formatAddress(contractAddress)}
-                    <ExternalLink className="ml-2 size-4" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="mt-8 items-center">
-              <h4 className="type-h4 text-nowrap font-mono">Current Owner:</h4>
-
-              <div className="flex items-center space-x-1">
-                <CopyButton
-                  variant="ghost"
-                  size="sm"
-                  text={contractAddress}
-                  className="mr-2"
-                  description="Copied address to clipboard"
-                />
-                <Link href={getBscHref(owner as string)} target="_blank">
-                  <Button className="pl-0" variant="link">
-                    {formatAddress(owner)}
-                    <ExternalLink className="ml-2 size-4" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </Card>
-          <PurchaseDialog
-            open={dialogOpen}
-            setOpen={setDialogOpen}
-            price={price}
-            onConfirm={purchaseAccount}
-          >
-            <Button
-              disabled={purchaseDisabled}
-              size="lg"
-              className="mt-4 w-full"
-            >
-              {!purchaseDisabled && <Coins className="mr-2 size-4" />}
-              {ctaText()}
-            </Button>
-          </PurchaseDialog>
-        </div>
+        <PurchaseDialog
+          open={dialogOpen}
+          setOpen={setDialogOpen}
+          price={price}
+          onConfirm={purchaseAccount}
+        >
+          <Button disabled={purchaseDisabled} size="lg" className="mt-4 w-full">
+            {!purchaseDisabled && <Coins className="mr-2 size-4" />}
+            {ctaText()}
+          </Button>
+        </PurchaseDialog>
       </div>
     </div>
   );

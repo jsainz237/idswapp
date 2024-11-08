@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Coins, ExternalLink, Eye } from "lucide-react";
+import { Coins, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useReadContract } from "wagmi";
 
 import { IDSwappFactoryAbi } from "@/abi-gen";
@@ -22,6 +23,7 @@ import { IAccount } from "@/lib/types";
 import { formatAddress, formatPrice } from "@/lib/utils";
 
 export default function AccountsPage() {
+  const router = useRouter();
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
   const [search, setSearch] = useState<string | undefined>();
   const [purchasable, setPurchasable] = useState<boolean>(false);
@@ -42,6 +44,8 @@ export default function AccountsPage() {
   };
 
   const displayDescription = (description: string) => {
+    if (!description) return "-";
+
     if (description.length > 60) {
       return `${description.slice(0, 60)}...`;
     }
@@ -118,7 +122,7 @@ export default function AccountsPage() {
             <Coins className="size-4" />
           </Toggle>
           <Input
-            className="after:content-['wei'] max-md:w-full md:flex-1 lg:w-40"
+            className="w-40 after:content-['wei'] max-sm:flex-1"
             type="number"
             placeholder="Max price (BNB)"
             step="0.01"
@@ -127,7 +131,7 @@ export default function AccountsPage() {
             onChange={e => setMaxPrice(parseFloat(e.target.value))}
           />
           <Input
-            className="max-md:w-full md:flex-1 lg:w-80"
+            className="max-sm:w-full sm:flex-1 lg:w-80"
             type="search"
             placeholder="Search"
             value={search}
@@ -140,35 +144,45 @@ export default function AccountsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="min-w-[140px]">Address</TableHead>
-              <TableHead className="min-w-[140px]">Owner</TableHead>
+              <TableHead className="min-w-[140px] max-md:hidden">
+                Address
+              </TableHead>
+              <TableHead className="min-w-[140px] max-md:hidden">
+                Owner
+              </TableHead>
               <TableHead className="min-w-[200px]">Description</TableHead>
               <TableHead className="min-w-[100px]">Price</TableHead>
-              <TableHead className="w-[120px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredAccounts?.map((account: IAccount) => (
-              <TableRow key={account._contract}>
-                <TableCell className="font-medium" title={account._contract}>
+              <TableRow
+                key={account._contract}
+                className="cursor-pointer"
+                onClick={() => router.push(`/accounts/${account._contract}`)}
+              >
+                <TableCell
+                  className="font-medium max-md:hidden"
+                  title={account._contract}
+                >
                   {renderAddressLink(account._contract)}
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium max-md:hidden">
                   {renderAddressLink(account._owner)}
                 </TableCell>
                 <TableCell title={account.description}>
                   {displayDescription(account.description)}
                 </TableCell>
                 <TableCell>{renderPrice(account)}</TableCell>
-                <TableCell>
-                  <Link href={`/accounts/${account._contract}`} target="_blank">
-                    <Button title="view" size="sm" variant="ghost">
-                      <Eye className="size-4" />
-                    </Button>
-                  </Link>
-                </TableCell>
               </TableRow>
             ))}
+            {filteredAccounts?.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  No accounts found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
