@@ -1,9 +1,6 @@
 import fs from "fs/promises";
 import { HardhatUserConfig, task } from "hardhat/config";
 
-import IDSwappAccount from "./artifacts/contracts/idswapp-account.sol/IDSwappAccount.json";
-import IDSwappFactory from "./artifacts/contracts/idswapp-factory.sol/IDSwappFactory.json";
-
 import "@nomicfoundation/hardhat-ignition-ethers";
 import "@nomicfoundation/hardhat-toolbox";
 
@@ -18,6 +15,13 @@ const config: HardhatUserConfig = {
 
 task("generate", "Generates abi typescript defs for contracts").setAction(
   async () => {
+    const IDSwappAccount = await import(
+      "./artifacts/contracts/idswapp-account.sol/IDSwappAccount.json"
+    );
+    const IDSwappFactory = await import(
+      "./artifacts/contracts/idswapp-factory.sol/IDSwappFactory.json"
+    );
+
     const contracts = [IDSwappAccount, IDSwappFactory];
     const file = "./src/abi-gen.ts";
 
