@@ -25,7 +25,7 @@ export default function MyAccountsPage() {
 
   if (!wallet.address) {
     return (
-      <div className="flex h-full flex-col items-center justify-center self-stretch">
+      <div className="flex flex-1 flex-col items-center justify-center self-stretch">
         <h2 className="type-h2 text-center">Wallet not connected</h2>
         <h4 className="type-h4 mt-2 text-center">
           Connect your wallet to view accounts you own
@@ -39,10 +39,15 @@ export default function MyAccountsPage() {
   });
 
   return (
-    <div className="p-header container">
-      <div className="flex flex-col items-start pt-10">
-        <h2 className="type-h2 mt-10 font-mono">Your IDSwapp Accounts</h2>
-        <div className="grid w-full grid-cols-3 gap-4 py-10">
+    <div className="container mt-10">
+      <div className="flex flex-col items-start pt-10 max-md:items-center">
+        <h2 className="type-h2 mt-10 font-mono max-sm:text-2xl">
+          Your IDSwapp Accounts
+        </h2>
+        {userAccounts?.length === 0 && (
+          <h4 className="type-h4 mt-10">No accounts found</h4>
+        )}
+        <div className="grid w-full grid-cols-1 gap-4 py-10 md:grid-cols-2 lg:grid-cols-3">
           {isLoading && (
             <>
               <AccountSkeleton />

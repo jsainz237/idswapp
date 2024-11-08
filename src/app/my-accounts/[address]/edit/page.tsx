@@ -111,9 +111,9 @@ export default function EditAccountPage({ params }: EditAccountPageProps) {
   };
 
   return (
-    <div className="p-header container max-w-xl">
+    <div className="container my-10 max-w-xl">
       <div className="pt-10">
-        <h2 className="type-h2 border-b-0 font-mono">
+        <h2 className="type-h2 border-b-0 font-mono max-sm:text-2xl">
           Edit Account {subdomain}
         </h2>
         <Card className="p-6">
