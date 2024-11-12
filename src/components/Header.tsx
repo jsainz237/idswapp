@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useBreakpoints } from "@/hooks/useBreakpoints";
 import { useWindow } from "@/hooks/useWindow";
 import { cn } from "@/lib/utils";
 
@@ -65,6 +66,7 @@ const links: (Link | LinkGroup)[] = [
 export function Header() {
   const { scrollY } = useScroll();
   const { height } = useWindow();
+  const { min, max } = useBreakpoints();
   const pathname = usePathname();
 
   const scrollOffset = (height ?? 1000) / 2;
@@ -172,7 +174,7 @@ export function Header() {
 
   return (
     <div className="fixed top-0 z-50 w-full bg-background py-4">
-      <div className="container relative flex w-full items-center justify-between">
+      <div className="container relative flex w-full items-center justify-between pl-4">
         <div className="flex items-center gap-4">
           <MobileNav />
           <NavigationMenu className="hidden md:block">
@@ -180,7 +182,7 @@ export function Header() {
           </NavigationMenu>
         </div>
 
-        <div className="absolute inset-x-0 mx-auto w-fit overflow-hidden">
+        <div className="absolute inset-x-0 mx-auto w-fit overflow-hidden max-xs:hidden">
           <LogoWrapper>
             <Image
               src="/logo.svg"
@@ -192,26 +194,12 @@ export function Header() {
           </LogoWrapper>
         </div>
 
-        <div className="block sm:hidden">
-          <ConnectButton
-            label={(<Wallet />) as any as string}
-            accountStatus={{
-              smallScreen: "avatar",
-              largeScreen: "address",
-            }}
-            chainStatus="icon"
-          />
-        </div>
-
-        <div className="hidden sm:block">
-          <ConnectButton
-            accountStatus={{
-              smallScreen: "avatar",
-              largeScreen: "address",
-            }}
-            chainStatus="icon"
-          />
-        </div>
+        <ConnectButton
+          label={min("sm") ? ((<Wallet />) as any as string) : undefined}
+          accountStatus="avatar"
+          showBalance={min("lg")}
+          chainStatus="icon"
+        />
       </div>
     </div>
   );
