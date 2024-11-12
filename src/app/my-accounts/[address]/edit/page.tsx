@@ -2,24 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { formatEther } from "ethers";
-import { TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
 import { IDSwappAccountAbi } from "@/abi-gen";
 import { AccountSkeleton } from "@/components/Account-Skeleton";
+import { ConfirmationDrawer } from "@/components/Confirmation-Drawer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -164,6 +154,13 @@ export default function EditAccountPage({ params }: EditAccountPageProps) {
               open={drawerOpen}
               setOpen={setDrawerOpen}
               onConfirm={saveChanges}
+              text={{
+                title: "Gas Fee Warning",
+                description:
+                  "Changing the details of your account will require a gas fee to be paid.",
+                confirmText: "Confirm and save",
+                cancelText: "Cancel",
+              }}
             >
               <Button>Save Changes</Button>
             </ConfirmationDrawer>
@@ -204,58 +201,5 @@ function AccessDeniedScreen() {
         </p>
       </div>
     </div>
-  );
-}
-
-interface ConfirmationDrawerProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-
-  onConfirm?: () => void | Promise<void>;
-  onCancel?: () => void;
-  children: React.ReactNode;
-}
-
-function ConfirmationDrawer({
-  open,
-  setOpen,
-  onConfirm,
-  onCancel,
-  children,
-}: ConfirmationDrawerProps) {
-  const onConfirmClick = async () => {
-    await onConfirm?.();
-    setOpen(false);
-  };
-
-  return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle className="flex items-center max-sm:justify-center">
-              <TriangleAlert className="mr-4 text-yellow-500" />
-              Gas Fee Warning
-            </DrawerTitle>
-            <DrawerDescription>
-              Changing the details of your account will require a gas fee to be
-              paid.
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="my-4" />
-          <DrawerFooter>
-            <Button className="w-full" onClick={onConfirmClick}>
-              Confirm and save
-            </Button>
-            <DrawerClose asChild>
-              <Button variant="outline" className="w-full" onClick={onCancel}>
-                Cancel
-              </Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </div>
-      </DrawerContent>
-    </Drawer>
   );
 }
