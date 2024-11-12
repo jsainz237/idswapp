@@ -59,7 +59,7 @@ const links: (Link | LinkGroup)[] = [
         Create
       </span>
     ),
-    href: "/new",
+    href: "/accounts/create",
   },
 ];
 
@@ -195,7 +195,7 @@ export function Header() {
         </div>
 
         <ConnectButton
-          label={min("sm") ? ((<Wallet />) as any as string) : undefined}
+          label={max("md") ? ((<Wallet />) as any as string) : undefined}
           accountStatus="avatar"
           showBalance={min("lg")}
           chainStatus="icon"

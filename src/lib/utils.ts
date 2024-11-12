@@ -15,3 +15,6 @@ export function formatPrice(price: BigNumberish) {
 }
 
 export const isEven = (num: number) => num % 2 === 0;
+
+export const isEmail = (str: string) =>
+  new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g).test(str);
