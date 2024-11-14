@@ -45,7 +45,7 @@ const GenerateButton = ({ isInView }: { isInView: boolean }) => {
     "flex items-center text-foreground transition-all duration-500";
 
   return (
-    <Link href="/new">
+    <Link href="/accounts/create">
       <Button
         id="generate-button"
         className="relative mt-16 overflow-hidden bg-background font-mono text-foreground transition-colors hover:bg-background max-sm:mt-10"
