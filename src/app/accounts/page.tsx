@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { Coins, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useReadContract } from "wagmi";
+import { useAccount, useChains, useReadContract } from "wagmi";
+import { bsc } from "wagmi/chains";
 
 import { IDSwappFactoryAbi } from "@/abi-gen";
 import { CopyButton } from "@/components/Copy-Button";
@@ -28,7 +29,14 @@ export default function AccountsPage() {
   const [search, setSearch] = useState<string | undefined>();
   const [purchasable, setPurchasable] = useState<boolean>(false);
 
+  const wallet = useAccount();
+  const chains = useChains();
+  const chain = useMemo(() => {
+    return chains.find(c => c.id === wallet.chainId) || bsc;
+  }, [chains, wallet.chainId]);
+
   const { data: accounts } = useReadContract({
+    chainId: chain.id as any,
     abi: IDSwappFactoryAbi,
     address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
     functionName: "getAll",
@@ -106,6 +114,8 @@ export default function AccountsPage() {
     });
   }, [accounts, maxPrice, purchasable, search]);
 
+  console.log(filteredAccounts);
+
   return (
     <div className="container">
       <div className="mt-10 flex flex-col gap-4 sm:mt-20 lg:flex-row lg:items-center lg:justify-between">
@@ -176,10 +186,11 @@ export default function AccountsPage() {
                 <TableCell>{renderPrice(account)}</TableCell>
               </TableRow>
             ))}
-            {filteredAccounts?.length === 0 && (
+            {(!filteredAccounts || filteredAccounts.length === 0) && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center">
-                  No accounts found
+                  No accounts on{" "}
+                  <span className="font-bold">{chain?.name}</span>
                 </TableCell>
               </TableRow>
             )}
