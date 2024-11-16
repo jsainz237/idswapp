@@ -79,7 +79,11 @@ export default function CreatePage() {
   };
 
   if (!wallet.address) {
-    return <WalletNotConnected />;
+    return (
+      <WalletNotConnected>
+        Connect your wallet to generate an account
+      </WalletNotConnected>
+    );
   }
 
   if (isSuccess && acctAddress) {

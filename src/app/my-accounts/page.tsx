@@ -25,7 +25,11 @@ export default function MyAccountsPage() {
   });
 
   if (!wallet.address) {
-    return <WalletNotConnected />;
+    return (
+      <WalletNotConnected>
+        Connect your wallet to view accounts you own
+      </WalletNotConnected>
+    );
   }
 
   const userAccounts = accounts?.filter((account: IAccount) => {
