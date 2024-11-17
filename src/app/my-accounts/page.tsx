@@ -1,6 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { formatEther } from "ethers";
+import _ from "lodash";
 import { Coins, ExternalLink, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useAccount, useReadContract } from "wagmi";
@@ -11,11 +13,15 @@ import { CopyButton } from "@/components/Copy-Button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import WalletNotConnected from "@/components/WalletNotConnected";
+import { useBreakpoints } from "@/hooks/useBreakpoints";
+import { useCurrentChain } from "@/hooks/useCurrentChain";
 import { IAccount } from "@/lib/types";
 import { cn, formatAddress } from "@/lib/utils";
 
 export default function MyAccountsPage() {
   const wallet = useAccount();
+  const chain = useCurrentChain();
+  const { min } = useBreakpoints();
 
   const { data: accounts, isLoading } = useReadContract({
     abi: IDSwappFactoryAbi,
@@ -23,6 +29,22 @@ export default function MyAccountsPage() {
     functionName: "getAll",
     args: [],
   });
+
+  const userAccounts = useMemo(() => {
+    return (accounts || []).filter((account: IAccount) => {
+      return account._owner === wallet.address;
+    });
+  }, [accounts, wallet.address]);
+
+  const accountsToDisplay = useMemo(() => {
+    const arrLength = (() => {
+      if (min("lg")) return 3;
+      if (min("md")) return 2;
+      return 1;
+    })();
+
+    return _.assign(_.fill(new Array(arrLength), null), userAccounts);
+  }, [userAccounts, min]);
 
   if (!wallet.address) {
     return (
@@ -32,20 +54,21 @@ export default function MyAccountsPage() {
     );
   }
 
-  const userAccounts = accounts?.filter((account: IAccount) => {
-    return account._owner === wallet.address;
-  });
-
   return (
     <div className="container mt-10">
-      <div className="flex flex-col items-start pt-10 max-md:items-center">
+      <div className="flex flex-col items-center pt-10">
         <h2 className="type-h2 mt-10 font-mono max-sm:text-2xl">
           Your IDSwapp Accounts
         </h2>
-        {userAccounts?.length === 0 && (
-          <h4 className="type-h4 mt-10">No accounts found</h4>
+        {(!userAccounts || userAccounts?.length === 0) && !isLoading && (
+          <p className="type-p mt-10 text-center font-normal">
+            No accounts owned on{" "}
+            <span className="font-bold">
+              {chain.name} ({chain.id})
+            </span>
+          </p>
         )}
-        <div className="grid w-full grid-cols-1 gap-4 py-10 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid w-full grid-cols-1 place-items-center gap-4 py-10 md:grid-cols-2 lg:grid-cols-3">
           {isLoading && (
             <>
               <AccountSkeleton />
@@ -53,13 +76,19 @@ export default function MyAccountsPage() {
               <AccountSkeleton />
             </>
           )}
-          {userAccounts?.map((account: IAccount) => (
-            <AccountCard
-              key={account._contract}
-              account={account}
-              isLoading={isLoading}
-            />
-          ))}
+          {!isLoading &&
+            userAccounts.length &&
+            accountsToDisplay.map((account: IAccount | null, index: number) =>
+              !account ? (
+                <Card key={index} className="size-full border-dashed" />
+              ) : (
+                <AccountCard
+                  key={index}
+                  account={account}
+                  isLoading={isLoading}
+                />
+              ),
+            )}
         </div>
       </div>
     </div>
@@ -72,6 +101,7 @@ interface AccountCardProps {
 }
 
 function AccountCard({ account, isLoading }: AccountCardProps) {
+  const wallet = useAccount();
   const { data: privateDetails, isLoading: detailsLoading } = useReadContract({
     abi: IDSwappAccountAbi,
     address: account._contract as `0x${string}`,
@@ -85,7 +115,7 @@ function AccountCard({ account, isLoading }: AccountCardProps) {
     return <AccountSkeleton />;
   }
 
-  const accountEmail = `account+${subdomain}@idswapp.com`;
+  const accountEmail = `account+${wallet.chainId}+${subdomain}@idswapp.com`;
 
   return (
     <Card className="w-full px-6 py-4">

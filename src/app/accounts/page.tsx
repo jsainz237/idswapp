@@ -4,8 +4,7 @@ import { useMemo, useState } from "react";
 import { Coins, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAccount, useChains, useReadContract } from "wagmi";
-import { bsc } from "wagmi/chains";
+import { useReadContract } from "wagmi";
 
 import { IDSwappFactoryAbi } from "@/abi-gen";
 import { CopyButton } from "@/components/Copy-Button";
@@ -20,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Toggle } from "@/components/ui/toggle";
+import { useCurrentChain } from "@/hooks/useCurrentChain";
 import { IAccount } from "@/lib/types";
 import { formatAddress, formatPrice } from "@/lib/utils";
 
@@ -29,12 +29,7 @@ export default function AccountsPage() {
   const [search, setSearch] = useState<string | undefined>();
   const [purchasable, setPurchasable] = useState<boolean>(false);
 
-  const wallet = useAccount();
-  const chains = useChains();
-  const chain = useMemo(() => {
-    return chains.find(c => c.id === wallet.chainId) || bsc;
-  }, [chains, wallet.chainId]);
-
+  const chain = useCurrentChain();
   const { data: accounts } = useReadContract({
     chainId: chain.id as any,
     abi: IDSwappFactoryAbi,
