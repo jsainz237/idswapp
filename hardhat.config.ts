@@ -1,14 +1,22 @@
+import dotenv from "dotenv";
 import fs from "fs/promises";
 import { HardhatUserConfig, task } from "hardhat/config";
 
 import "@nomicfoundation/hardhat-ignition-ethers";
 import "@nomicfoundation/hardhat-toolbox";
 
+dotenv.config({ path: ".env.local" });
+
 const config: HardhatUserConfig = {
   solidity: "0.8.24",
   networks: {
     hardhat: {
       chainId: 1337,
+    },
+    bscTestnet: {
+      url: "https://bsc-testnet-dataseed.bnbchain.org",
+      chainId: 97,
+      accounts: [process.env.BSC_TESTNET_PRIVATE_KEY!],
     },
   },
 };

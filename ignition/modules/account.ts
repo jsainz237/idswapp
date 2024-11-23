@@ -1,7 +1,9 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-export default buildModule("IDSwapp", m => {
-  const factory = m.contract("IDSwappFactory");
+import FactoryModule from "./factory";
+
+export default buildModule("IDSwappFactory", m => {
+  const { factory } = m.useModule(FactoryModule);
   const accountEvent = m.call(factory, "createAccount", ["test@email.com"], {
     after: [factory],
   });
