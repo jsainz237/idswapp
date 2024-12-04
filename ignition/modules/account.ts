@@ -4,9 +4,14 @@ import FactoryModule from "./factory";
 
 export default buildModule("IDSwappFactory", m => {
   const { factory } = m.useModule(FactoryModule);
-  const accountEvent = m.call(factory, "createAccount", ["test@email.com"], {
-    after: [factory],
-  });
+  const accountEvent = m.call(
+    factory,
+    "createAccount",
+    ["jsainz237@gmail.com"],
+    {
+      after: [factory],
+    },
+  );
 
   const address = m.readEventArgument(
     accountEvent,
