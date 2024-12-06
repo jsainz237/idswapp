@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useReadContract } from "wagmi";
 
+import config from "@/../config";
 import { IDSwappFactoryAbi } from "@/abi-gen";
 import { CopyButton } from "@/components/Copy-Button";
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,7 @@ export default function AccountsPage() {
   const { data: accounts } = useReadContract({
     chainId: chain.id as any,
     abi: IDSwappFactoryAbi,
-    address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
+    address: config.FACTORY_ADDRESS[chain.id],
     functionName: "getAll",
     args: [],
   });

@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Book, BookOpenText, Code, ExternalLink } from "lucide-react";
 
+import config from "@/../config";
+import { useCurrentChain } from "@/hooks/useCurrentChain";
 import { cn, formatAddress } from "@/lib/utils";
 
 import { ExpandableCardProps, ExpandableCards } from "../Expandable-Cards";
@@ -14,7 +16,7 @@ import {
 } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
-const resources = [
+const getResources = (chainId: number) => [
   {
     title: "How it works",
     shortDescription:
@@ -29,7 +31,7 @@ const resources = [
       "The smart contract responsible for generating IDSwapp Accounts and their associated smart contracts",
     longDescription:
       "This smart contract is responsible for generating IDSwapp IDs & their associated smart contracts. When an ID is generated, the factory deploys a new smart contract and whitelists it's address. Only IDSwapp Factory Admins and the ID contracts can interact with the factory",
-    address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS!,
+    address: config.FACTORY_ADDRESS[chainId],
   },
   {
     title: "IDSwapp Account",
@@ -37,11 +39,14 @@ const resources = [
       "A smart contract for managing a subdomain account with ownership, email forwarding, and trading capabilities.",
     longDescription:
       "This smart contract is responsible for managing a subdomain account with ownership, email forwarding, and trading capabilities. It is owned and whitelisted by the IDSwapp Factory and can only be interacted with by the IDSwapp Factory or the owner of the account.",
-    address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS!,
+    address: config.FACTORY_ADDRESS[chainId],
   },
 ];
 
 export function ResourcesSection() {
+  const chain = useCurrentChain();
+  const resources = useMemo(() => getResources(chain.id), [chain.id]);
+
   return (
     <div className="container flex w-full flex-col items-center py-10">
       <h2 className="type-h2 mb-8 font-mono">Resources</h2>

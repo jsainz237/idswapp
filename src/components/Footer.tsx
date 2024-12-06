@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import config from "@/../config";
+
 const LOGO_HEIGHT = 16;
 
 const calculateLogoWidth = (height: number) => {
@@ -13,11 +15,11 @@ export function Footer() {
     <div className="flex items-center justify-between border-t border-border px-4 py-6 sm:px-8">
       <p className="type-p font-mono text-xs text-muted-foreground">
         Built by{" "}
-        <Link href={process.env.NEXT_PUBLIC_PORTFOLIO_URL!} target="_blank">
+        <Link href={config.NEXT_PUBLIC_PORTFOLIO_URL!} target="_blank">
           <span className="font-bold underline">yours truly</span>
         </Link>
       </p>
-      <Link href={process.env.NEXT_PUBLIC_PORTFOLIO_URL!} target="_blank">
+      <Link href={config.NEXT_PUBLIC_PORTFOLIO_URL!} target="_blank">
         <Image
           src="/js-logo.svg"
           alt="JSAINZ"

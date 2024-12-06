@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatAddress(address: string) {
+  if (!address) return "";
   return `${address.slice(0, 4)}...${address.slice(-4)}`;
 }
 

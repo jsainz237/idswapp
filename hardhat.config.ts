@@ -1,16 +1,15 @@
-import dotenv from "dotenv";
 import fs from "fs/promises";
 import { HardhatUserConfig, task } from "hardhat/config";
+
+import config from "./config";
 
 import "@nomicfoundation/hardhat-ignition-ethers";
 import "@nomicfoundation/hardhat-toolbox";
 
-dotenv.config({ path: ".env.local" });
-
-const config: HardhatUserConfig = {
+const hardhatConfig: HardhatUserConfig = {
   solidity: "0.8.24",
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY!,
+    apiKey: config.ETHERSCAN_API_KEY,
   },
   networks: {
     hardhat: {
@@ -19,7 +18,7 @@ const config: HardhatUserConfig = {
     bscTestnet: {
       url: "https://bsc-testnet-dataseed.bnbchain.org",
       chainId: 97,
-      accounts: [process.env.BSC_TESTNET_PRIVATE_KEY!],
+      accounts: [config.PRIVATE_KEY[97]!],
     },
   },
 };
@@ -48,4 +47,4 @@ task("generate", "Generates abi typescript defs for contracts").setAction(
   },
 );
 
-export default config;
+export default hardhatConfig;

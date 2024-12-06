@@ -12,6 +12,7 @@ import {
   useWriteContract,
 } from "wagmi";
 
+import config from "@/../config";
 import { IDSwappFactoryAbi } from "@/abi-gen";
 import { ConfirmationDrawer } from "@/components/Confirmation-Drawer";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import WalletNotConnected from "@/components/WalletNotConnected";
 import { useBreakpoints } from "@/hooks/useBreakpoints";
+import { useCurrentChain } from "@/hooks/useCurrentChain";
 import { formatAddress, isEmail } from "@/lib/utils";
 
 export default function CreatePage() {
@@ -29,6 +31,8 @@ export default function CreatePage() {
   const { max } = useBreakpoints();
 
   const wallet = useAccount();
+  const chain = useCurrentChain();
+
   const {
     data: hash,
     isPending,
@@ -45,13 +49,13 @@ export default function CreatePage() {
     refetch: refetchRead,
   } = useReadContract({
     abi: IDSwappFactoryAbi,
-    address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
+    address: config.FACTORY_ADDRESS[chain.id],
     functionName: "subdomainCounter",
   });
 
   useWatchContractEvent({
     abi: IDSwappFactoryAbi,
-    address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
+    address: config.FACTORY_ADDRESS[chain.id],
     eventName: "IDSwappAccountCreated",
     onLogs: ([{ args }]) => setAcctAddress(args?.account ?? null),
   });
@@ -72,7 +76,7 @@ export default function CreatePage() {
   const generateAccount = () => {
     writeContract({
       abi: IDSwappFactoryAbi,
-      address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
+      address: config.FACTORY_ADDRESS[chain.id],
       functionName: "createAccount",
       args: [email],
     });

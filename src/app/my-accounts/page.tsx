@@ -7,6 +7,7 @@ import { Coins, ExternalLink, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useAccount, useReadContract } from "wagmi";
 
+import config from "@/../config";
 import { IDSwappAccountAbi, IDSwappFactoryAbi } from "@/abi-gen";
 import { AccountSkeleton } from "@/components/Account-Skeleton";
 import { CopyButton } from "@/components/Copy-Button";
@@ -25,7 +26,7 @@ export default function MyAccountsPage() {
 
   const { data: accounts, isLoading } = useReadContract({
     abi: IDSwappFactoryAbi,
-    address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`,
+    address: config.FACTORY_ADDRESS[chain.id],
     functionName: "getAll",
     args: [],
   });
@@ -106,6 +107,7 @@ function AccountCard({ account, isLoading }: AccountCardProps) {
     abi: IDSwappAccountAbi,
     address: account._contract as `0x${string}`,
     functionName: "privateDetails",
+    account: wallet.address,
   });
 
   const loading = isLoading || detailsLoading;
@@ -115,7 +117,7 @@ function AccountCard({ account, isLoading }: AccountCardProps) {
     return <AccountSkeleton />;
   }
 
-  const accountEmail = `account+${wallet.chainId}+${subdomain}@idswapp.com`;
+  const accountEmail = `account+${subdomain}@${wallet.chainId}.idswapp.com`;
 
   return (
     <Card className="w-full px-6 py-4">
