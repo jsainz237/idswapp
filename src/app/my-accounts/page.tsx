@@ -7,7 +7,6 @@ import { Coins, ExternalLink, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useAccount, useReadContract } from "wagmi";
 
-import config from "@/../config";
 import { IDSwappAccountAbi, IDSwappFactoryAbi } from "@/abi-gen";
 import { AccountSkeleton } from "@/components/Account-Skeleton";
 import { CopyButton } from "@/components/Copy-Button";
@@ -21,12 +20,12 @@ import { cn, formatAddress } from "@/lib/utils";
 
 export default function MyAccountsPage() {
   const wallet = useAccount();
-  const chain = useCurrentChain();
+  const { chain, factoryAddress } = useCurrentChain();
   const { min } = useBreakpoints();
 
   const { data: accounts, isLoading } = useReadContract({
     abi: IDSwappFactoryAbi,
-    address: config.FACTORY_ADDRESS[chain.id],
+    address: factoryAddress,
     functionName: "getAll",
     args: [],
   });

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Book, BookOpenText, Code, ExternalLink } from "lucide-react";
 
-import config from "@/../config";
 import { useCurrentChain } from "@/hooks/useCurrentChain";
 import { cn, formatAddress } from "@/lib/utils";
 
@@ -16,36 +15,35 @@ import {
 } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
-const getResources = (chainId: number) => [
-  {
-    title: "How it works",
-    shortDescription:
-      "Generate an IDSwapp ID. Link external accounts. Sell you accounts via smart contract",
-    longDescription:
-      "When you create an account, an IDSwapp Account smart contract is automatically generated and owned by you. You can link an external account/email address to your IDSwapp ID, set your price, and sell your IDSwapp ID via smart contract.",
-    address: "",
-  },
-  {
-    title: "IDSwapp Factory",
-    shortDescription:
-      "The smart contract responsible for generating IDSwapp Accounts and their associated smart contracts",
-    longDescription:
-      "This smart contract is responsible for generating IDSwapp IDs & their associated smart contracts. When an ID is generated, the factory deploys a new smart contract and whitelists it's address. Only IDSwapp Factory Admins and the ID contracts can interact with the factory",
-    address: config.FACTORY_ADDRESS[chainId],
-  },
-  {
-    title: "IDSwapp Account",
-    shortDescription:
-      "A smart contract for managing a subdomain account with ownership, email forwarding, and trading capabilities.",
-    longDescription:
-      "This smart contract is responsible for managing a subdomain account with ownership, email forwarding, and trading capabilities. It is owned and whitelisted by the IDSwapp Factory and can only be interacted with by the IDSwapp Factory or the owner of the account.",
-    address: config.FACTORY_ADDRESS[chainId],
-  },
-];
-
 export function ResourcesSection() {
-  const chain = useCurrentChain();
-  const resources = useMemo(() => getResources(chain.id), [chain.id]);
+  const { factoryAddress } = useCurrentChain();
+
+  const resources = [
+    {
+      title: "How it works",
+      shortDescription:
+        "Generate an IDSwapp ID. Link external accounts. Sell you accounts via smart contract",
+      longDescription:
+        "When you create an account, an IDSwapp Account smart contract is automatically generated and owned by you. You can link an external account/email address to your IDSwapp ID, set your price, and sell your IDSwapp ID via smart contract.",
+      address: "",
+    },
+    {
+      title: "IDSwapp Factory",
+      shortDescription:
+        "The smart contract responsible for generating IDSwapp Accounts and their associated smart contracts",
+      longDescription:
+        "This smart contract is responsible for generating IDSwapp IDs & their associated smart contracts. When an ID is generated, the factory deploys a new smart contract and whitelists it's address. Only IDSwapp Factory Admins and the ID contracts can interact with the factory",
+      address: factoryAddress,
+    },
+    {
+      title: "IDSwapp Account",
+      shortDescription:
+        "A smart contract for managing a subdomain account with ownership, email forwarding, and trading capabilities.",
+      longDescription:
+        "This smart contract is responsible for managing a subdomain account with ownership, email forwarding, and trading capabilities. It is owned and whitelisted by the IDSwapp Factory and can only be interacted with by the IDSwapp Factory or the owner of the account.",
+      address: factoryAddress,
+    },
+  ];
 
   return (
     <div className="container flex w-full flex-col items-center py-10">

@@ -1,15 +1,14 @@
 import fs from "fs/promises";
 import { HardhatUserConfig, task } from "hardhat/config";
 
-import config from "./config";
-
+import "./load-env";
 import "@nomicfoundation/hardhat-ignition-ethers";
 import "@nomicfoundation/hardhat-toolbox";
 
 const hardhatConfig: HardhatUserConfig = {
   solidity: "0.8.24",
   etherscan: {
-    apiKey: config.ETHERSCAN_API_KEY,
+    apiKey: process.env.ETHERSCAN_API_KEY,
   },
   networks: {
     hardhat: {
@@ -18,7 +17,7 @@ const hardhatConfig: HardhatUserConfig = {
     bscTestnet: {
       url: "https://bsc-testnet-dataseed.bnbchain.org",
       chainId: 97,
-      accounts: [config.PRIVATE_KEY[97]!],
+      accounts: [process.env.PRIVATE_KEY_97!],
     },
   },
 };

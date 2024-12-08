@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useReadContract } from "wagmi";
 
-import config from "@/../config";
 import { IDSwappFactoryAbi } from "@/abi-gen";
 import { CopyButton } from "@/components/Copy-Button";
 import { Button } from "@/components/ui/button";
@@ -30,11 +29,11 @@ export default function AccountsPage() {
   const [search, setSearch] = useState<string | undefined>();
   const [purchasable, setPurchasable] = useState<boolean>(false);
 
-  const chain = useCurrentChain();
+  const { chain, factoryAddress } = useCurrentChain();
   const { data: accounts } = useReadContract({
     chainId: chain.id as any,
     abi: IDSwappFactoryAbi,
-    address: config.FACTORY_ADDRESS[chain.id],
+    address: factoryAddress,
     functionName: "getAll",
     args: [],
   });
@@ -109,8 +108,6 @@ export default function AccountsPage() {
       return true;
     });
   }, [accounts, maxPrice, purchasable, search]);
-
-  console.log(filteredAccounts);
 
   return (
     <div className="container">
