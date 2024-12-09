@@ -77,7 +77,7 @@ export default function MyAccountsPage() {
             </>
           )}
           {!isLoading &&
-            userAccounts.length &&
+            userAccounts.length !== 0 &&
             accountsToDisplay.map((account: IAccount | null, index: number) =>
               !account ? (
                 <Card key={index} className="size-full border-dashed" />
