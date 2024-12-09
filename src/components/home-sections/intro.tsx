@@ -22,9 +22,6 @@ export function IntroSection() {
         >
           DECENTRALIZED ACCOUNT TRADING
         </DecodeText>
-        <DecodeText className="mt-4 text-sm" animationTime={1500}>
-          (WIP)
-        </DecodeText>
       </div>
 
       <div className="mb-10">
