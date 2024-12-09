@@ -116,7 +116,7 @@ function AccountCard({ account, isLoading }: AccountCardProps) {
     return <AccountSkeleton />;
   }
 
-  const accountEmail = `account+${subdomain}@${wallet.chainId}.idswapp.com`;
+  const accountEmail = `${subdomain}@${wallet.chainId}.idswapp.com`;
 
   return (
     <Card className="w-full px-6 py-4">
