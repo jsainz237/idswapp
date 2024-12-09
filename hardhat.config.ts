@@ -8,7 +8,7 @@ import "@nomicfoundation/hardhat-toolbox";
 const hardhatConfig: HardhatUserConfig = {
   solidity: "0.8.24",
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: process.env.BSCSCAN_API_KEY,
   },
   networks: {
     hardhat: {
@@ -18,6 +18,11 @@ const hardhatConfig: HardhatUserConfig = {
       url: "https://bsc-testnet-dataseed.bnbchain.org",
       chainId: 97,
       accounts: [process.env.PRIVATE_KEY_97!],
+    },
+    bscMainnet: {
+      url: "https://bsc-dataseed.bnbchain.org",
+      chainId: 56,
+      accounts: [process.env.PRIVATE_KEY_56!],
     },
   },
 };
