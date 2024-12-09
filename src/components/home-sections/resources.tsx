@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Book, BookOpenText, Code, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 import { useCurrentChain } from "@/hooks/useCurrentChain";
 import { cn, formatAddress } from "@/lib/utils";
@@ -16,7 +17,7 @@ import {
 import { Skeleton } from "../ui/skeleton";
 
 export function ResourcesSection() {
-  const { factoryAddress } = useCurrentChain();
+  const { factoryAddress, accountAddress } = useCurrentChain();
 
   const resources = [
     {
@@ -25,7 +26,6 @@ export function ResourcesSection() {
         "Generate an IDSwapp ID. Link external accounts. Sell you accounts via smart contract",
       longDescription:
         "When you create an account, an IDSwapp Account smart contract is automatically generated and owned by you. You can link an external account/email address to your IDSwapp ID, set your price, and sell your IDSwapp ID via smart contract.",
-      address: "",
     },
     {
       title: "IDSwapp Factory",
@@ -34,6 +34,7 @@ export function ResourcesSection() {
       longDescription:
         "This smart contract is responsible for generating IDSwapp IDs & their associated smart contracts. When an ID is generated, the factory deploys a new smart contract and whitelists it's address. Only IDSwapp Factory Admins and the ID contracts can interact with the factory",
       address: factoryAddress,
+      sourceUrl: process.env.NEXT_PUBLIC_FACTORY_SOURCE,
     },
     {
       title: "IDSwapp Account",
@@ -41,7 +42,8 @@ export function ResourcesSection() {
         "A smart contract for managing a subdomain account with ownership, email forwarding, and trading capabilities.",
       longDescription:
         "This smart contract is responsible for managing a subdomain account with ownership, email forwarding, and trading capabilities. It is owned and whitelisted by the IDSwapp Factory and can only be interacted with by the IDSwapp Factory or the owner of the account.",
-      address: factoryAddress,
+      address: accountAddress,
+      sourceUrl: process.env.NEXT_PUBLIC_ACCOUNT_SOURCE,
     },
   ];
 
@@ -63,7 +65,8 @@ interface ResourceCardProps extends ExpandableCardProps {
   title: string;
   shortDescription: string;
   longDescription: string;
-  address: string;
+  address?: string;
+  sourceUrl?: string;
 }
 
 const ResourceCard = ({
@@ -71,11 +74,13 @@ const ResourceCard = ({
   shortDescription,
   longDescription,
   address,
+  sourceUrl,
   isExpanded,
   isScrolling,
   handleCardClick,
 }: ResourceCardProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const { etherScanUrl } = useCurrentChain();
 
   // Anytime the card is expanded or collapsed, set that the card is animating
   useEffect(() => {
@@ -92,6 +97,11 @@ const ResourceCard = ({
       <Skeleton className="mt-2 h-4 w-1/2" />
       <Skeleton className="mt-2 h-4 w-1/3" />
     </>
+  );
+
+  const etherscanLink = useMemo(
+    () => (etherScanUrl ? `${etherScanUrl}/address/${address}` : undefined),
+    [etherScanUrl, address],
   );
 
   return (
@@ -115,23 +125,31 @@ const ResourceCard = ({
             <BookIcon className="size-4" />
           </Button>
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              className="group relative mr-2 w-12 justify-start rounded-full transition-[width] duration-200 ease-in-out hover:w-[140px]"
-            >
-              <div className="absolute right-[12px] top-[6px] flex items-center gap-2">
-                <div className="hidden opacity-0 transition-opacity duration-200 group-hover:block group-hover:opacity-100">
-                  view source
-                </div>
-                <Code />
-              </div>
-            </Button>
-            <Button size="sm" className="rounded-full">
-              <span className="flex items-center gap-2">
-                {formatAddress(address)}
-                <ExternalLink className="size-4" />
-              </span>
-            </Button>
+            {sourceUrl && (
+              <Link href={sourceUrl} target="_blank" className="flex">
+                <Button
+                  size="sm"
+                  className="group relative mr-2 w-12 justify-start rounded-full transition-[width] duration-200 ease-in-out hover:w-[140px]"
+                >
+                  <div className="absolute right-[12px] top-[6px] flex items-center gap-2">
+                    <div className="hidden opacity-0 transition-opacity duration-200 group-hover:block group-hover:opacity-100">
+                      view source
+                    </div>
+                    <Code />
+                  </div>
+                </Button>
+              </Link>
+            )}
+            {address && etherscanLink && (
+              <Link href={etherscanLink} target="_blank" className="flex">
+                <Button size="sm" className="rounded-full">
+                  <span className="flex items-center gap-2">
+                    {formatAddress(address)}
+                    <ExternalLink className="size-4" />
+                  </span>
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </CardFooter>
